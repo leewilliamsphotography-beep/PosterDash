@@ -41,7 +41,7 @@ input,select{font-family:inherit}
 .app{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - var(--tb))}
 .rail{border-right:1px solid var(--line);padding:24px;overflow-y:auto;background:var(--surface)}
 
-/* Fixed scrolling issue: using flex-start to prevent top cutoff */
+/* Fixed scrolling issue */
 .stage{display:flex; flex-direction: row; justify-content:center; align-items:flex-start; overflow:auto; padding:48px; background-color: var(--bg); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px;}
 
 /* ---------- text format toolbar ---------- */
@@ -52,6 +52,9 @@ input,select{font-family:inherit}
 .fmt-btn:hover svg{stroke:var(--text)}
 .fmt-select{background:var(--bg);border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:4px;font-size:13px;}
 .fmt-color{width:32px;height:32px;padding:0;border:1px solid var(--line);background:transparent;cursor:pointer;}
+.apply-all-wrapper{display:flex;align-items:center;gap:6px;margin-bottom:12px;padding:8px;background:var(--bg);border:1px solid var(--line);border-radius:6px}
+.apply-all-wrapper input{cursor:pointer}
+.apply-all-wrapper label{font-size:12px;color:var(--text);cursor:pointer;font-weight:600}
 
 /* ---------- rail panels ---------- */
 .panel{margin-bottom:32px}
@@ -63,14 +66,16 @@ input,select{font-family:inherit}
 .block-btn:hover{color:var(--text);border-color:var(--accent);transform:translateY(-2px)}
 .block-btn svg{width:20px;height:20px;stroke:var(--accent2)}
 
-.tpl-list, .theme-list{display:flex;flex-direction:column;gap:8px}
-.tpl-btn, .theme-btn{text-align:left;padding:12px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;color:var(--text);font:600 13px var(--f-ui);display:flex;align-items:center;gap:10px;transition:all .15s}
-.tpl-btn:hover, .theme-btn:hover{border-color:var(--accent2)}
-.theme-btn.active{border-color:var(--accent);background:rgba(255,77,77,0.1)}
+.tpl-list, .theme-list, .orient-list{display:flex;flex-direction:column;gap:8px}
+.tpl-btn, .theme-btn, .orient-btn{text-align:left;padding:12px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;color:var(--text);font:600 13px var(--f-ui);display:flex;align-items:center;gap:10px;transition:all .15s}
+.tpl-btn:hover, .theme-btn:hover, .orient-btn:hover{border-color:var(--accent2)}
+.theme-btn.active, .orient-btn.active{border-color:var(--accent);background:rgba(255,77,77,0.1)}
 .color-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--text-dim);flex:none}
 
 /* ---------- canvas / sheet ---------- */
-.sheet{width:210mm; min-height:297mm; background:#fff; color:#000; padding:20mm; display:flex; flex-direction:column; gap:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5); transition:background .3s, color .3s; position:relative; overflow:hidden;}
+.sheet{background:#fff; color:#000; padding:20mm; display:flex; flex-direction:column; gap:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5); transition:width .3s, min-height .3s, background .3s, color .3s; position:relative; overflow:hidden;}
+.sheet.portrait { width:210mm; min-height:297mm; }
+.sheet.landscape { width:297mm; min-height:210mm; }
 
 /* Block Styling */
 .block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
@@ -89,42 +94,42 @@ input,select{font-family:inherit}
 .block[data-type="shape"]{height:12px; background:#000; border-radius:6px; margin: 10px 0; align-self: flex-start; width: 60px;}
 .block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:cover; background-position:center;}
 
-/* Accessible Themes */
-.sheet.theme-spring { background:#F0FFF4; border-top:12px solid #10B981; }
-.sheet.theme-spring [data-type="h1"] { color:#065F46; } 
-.sheet.theme-spring [data-type="h2"] { color:#047857; } 
-.sheet.theme-spring [data-type="body"] { color:#065F46; }
-.sheet.theme-spring .block[data-type="shape"] { background:#10B981; }
+/* Accessible Themes - Rigidly applied via data-attribute to prevent editor stripping */
+.sheet[data-theme="spring"] { background:#F0FFF4 !important; border-top:12px solid #10B981 !important; }
+.sheet[data-theme="spring"] [data-type="h1"] { color:#065F46 !important; } 
+.sheet[data-theme="spring"] [data-type="h2"] { color:#047857 !important; } 
+.sheet[data-theme="spring"] [data-type="body"] { color:#065F46 !important; }
+.sheet[data-theme="spring"] .block[data-type="shape"] { background:#10B981 !important; }
 
-.sheet.theme-summer { background:#FFFDE7; border-top:12px solid #F59E0B; }
-.sheet.theme-summer [data-type="h1"] { color:#92400E; } 
-.sheet.theme-summer [data-type="h2"] { color:#B45309; } 
-.sheet.theme-summer [data-type="body"] { color:#92400E; }
-.sheet.theme-summer .block[data-type="shape"] { background:#F59E0B; }
+.sheet[data-theme="summer"] { background:#FFFDE7 !important; border-top:12px solid #F59E0B !important; }
+.sheet[data-theme="summer"] [data-type="h1"] { color:#92400E !important; } 
+.sheet[data-theme="summer"] [data-type="h2"] { color:#B45309 !important; } 
+.sheet[data-theme="summer"] [data-type="body"] { color:#92400E !important; }
+.sheet[data-theme="summer"] .block[data-type="shape"] { background:#F59E0B !important; }
 
-.sheet.theme-autumn { background:#FFF3E0; border-top:12px solid #D14C1E; }
-.sheet.theme-autumn [data-type="h1"] { color:#7C2D12; } 
-.sheet.theme-autumn [data-type="h2"] { color:#9A3412; } 
-.sheet.theme-autumn [data-type="body"] { color:#7C2D12; }
-.sheet.theme-autumn .block[data-type="shape"] { background:#D14C1E; }
+.sheet[data-theme="autumn"] { background:#FFF3E0 !important; border-top:12px solid #D14C1E !important; }
+.sheet[data-theme="autumn"] [data-type="h1"] { color:#7C2D12 !important; } 
+.sheet[data-theme="autumn"] [data-type="h2"] { color:#9A3412 !important; } 
+.sheet[data-theme="autumn"] [data-type="body"] { color:#7C2D12 !important; }
+.sheet[data-theme="autumn"] .block[data-type="shape"] { background:#D14C1E !important; }
 
-.sheet.theme-winter { background:#F0F9FF; border-top:12px solid #3B82F6; }
-.sheet.theme-winter [data-type="h1"] { color:#1E3A8A; } 
-.sheet.theme-winter [data-type="h2"] { color:#3730A3; } 
-.sheet.theme-winter [data-type="body"] { color:#1E3A8A; }
-.sheet.theme-winter .block[data-type="shape"] { background:#3B82F6; }
+.sheet[data-theme="winter"] { background:#F0F9FF !important; border-top:12px solid #3B82F6 !important; }
+.sheet[data-theme="winter"] [data-type="h1"] { color:#1E3A8A !important; } 
+.sheet[data-theme="winter"] [data-type="h2"] { color:#3730A3 !important; } 
+.sheet[data-theme="winter"] [data-type="body"] { color:#1E3A8A !important; }
+.sheet[data-theme="winter"] .block[data-type="shape"] { background:#3B82F6 !important; }
 
-.sheet.theme-medical { background:#F0FDFA; border-top:12px solid #14B8A6; }
-.sheet.theme-medical [data-type="h1"] { color:#115E59; } 
-.sheet.theme-medical [data-type="h2"] { color:#0F766E; } 
-.sheet.theme-medical [data-type="body"] { color:#115E59; }
-.sheet.theme-medical .block[data-type="shape"] { background:#14B8A6; }
+.sheet[data-theme="medical"] { background:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
+.sheet[data-theme="medical"] [data-type="h1"] { color:#115E59 !important; } 
+.sheet[data-theme="medical"] [data-type="h2"] { color:#0F766E !important; } 
+.sheet[data-theme="medical"] [data-type="body"] { color:#115E59 !important; }
+.sheet[data-theme="medical"] .block[data-type="shape"] { background:#14B8A6 !important; }
 
-.sheet.theme-cafe { background:#FBF7F0; border-top:12px solid #C4A484; }
-.sheet.theme-cafe [data-type="h1"] { color:#4A3B2A; } 
-.sheet.theme-cafe [data-type="h2"] { color:#6B5A48; } 
-.sheet.theme-cafe [data-type="body"] { color:#4A3B2A; }
-.sheet.theme-cafe .block[data-type="shape"] { background:#C4A484; }
+.sheet[data-theme="cafe"] { background:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
+.sheet[data-theme="cafe"] [data-type="h1"] { color:#4A3B2A !important; } 
+.sheet[data-theme="cafe"] [data-type="h2"] { color:#6B5A48 !important; } 
+.sheet[data-theme="cafe"] [data-type="body"] { color:#4A3B2A !important; }
+.sheet[data-theme="cafe"] .block[data-type="shape"] { background:#C4A484 !important; }
 
 /* ---------- utility ---------- */
 .hidden{display:none !important}
@@ -136,7 +141,7 @@ input,select{font-family:inherit}
   .topbar, .rail { display: none !important; }
   .app { display: block; height: auto; }
   .stage { padding: 0; background: none; overflow: visible; display: block; }
-  .sheet { width: 210mm; min-height: 297mm; box-shadow: none; margin: 0; max-width: 100%; }
+  .sheet { box-shadow: none; margin: 0; max-width: 100%; }
   .block-tools { display: none !important; }
 }
 </style>
@@ -167,6 +172,11 @@ input,select{font-family:inherit}
     <section class="panel">
       <div class="panel-title">Text Format</div>
       
+      <div class="apply-all-wrapper">
+        <input type="checkbox" id="applyAllChk">
+        <label for="applyAllChk">Apply to ALL text blocks</label>
+      </div>
+
       <!-- Row 1: Fonts & Sizes -->
       <div class="format-bar">
         <select class="fmt-select" id="fontSel" title="Font Family">
@@ -210,7 +220,7 @@ input,select{font-family:inherit}
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
       </div>
-      <p style="font-size:11px; color:var(--text-dim); margin:8px 0 0 0;">Select text in the poster, then click a tool above.</p>
+      <p style="font-size:11px; color:var(--text-dim); margin:8px 0 0 0;">Select text to format individually, or tick the box above to format everything.</p>
     </section>
 
     <section class="panel">
@@ -231,12 +241,24 @@ input,select{font-family:inherit}
         <button class="tpl-btn" data-tpl="notice">⚠️ Important Notice</button>
         <button class="tpl-btn" data-tpl="schedule">🗓️ Daily Schedule</button>
         <button class="tpl-btn" data-tpl="menu">☕ Cafe Menu</button>
+        <button class="tpl-btn" data-tpl="social">💬 Social Story</button>
+        <button class="tpl-btn" data-tpl="nowNext">⏭️ Now & Next Board</button>
+        <button class="tpl-btn" data-tpl="welcome">👋 Welcome Poster</button>
+        <button class="tpl-btn" data-tpl="rules">📜 Classroom Rules</button>
       </div>
     </section>
 
     <section class="panel">
-      <div class="panel-title">Sheet Themes</div>
+      <div class="panel-title">Sheet Settings</div>
+      
+      <div class="orient-list" style="margin-bottom: 16px;">
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px; font-weight:700;">Orientation</div>
+        <button class="orient-btn active" data-orient="portrait"><span style="font-size:16px">📄</span>Portrait</button>
+        <button class="orient-btn" data-orient="landscape"><span style="font-size:16px">📃</span>Landscape</button>
+      </div>
+
       <div class="theme-list">
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px; font-weight:700;">Theme</div>
         <button class="theme-btn active" data-theme="default"><span class="color-dot" style="background:#fff"></span>Plain White</button>
         <button class="theme-btn" data-theme="spring"><span class="color-dot" style="background:#10B981"></span>Spring (Green)</button>
         <button class="theme-btn" data-theme="summer"><span class="color-dot" style="background:#F59E0B"></span>Summer (Yellow)</button>
@@ -249,7 +271,7 @@ input,select{font-family:inherit}
   </aside>
 
   <section class="stage" id="stage">
-    <div class="sheet" id="sheet" data-theme="default">
+    <div class="sheet portrait" id="sheet" data-theme="default">
       <!-- Blocks injected here -->
     </div>
   </section>
@@ -263,6 +285,7 @@ input,select{font-family:inherit}
   const sheet = document.getElementById('sheet');
   const stage = document.getElementById('stage');
   const imageUpload = document.getElementById('imageUpload');
+  const applyAllChk = document.getElementById('applyAllChk');
 
   let history = [];
   let hIndex = -1;
@@ -274,10 +297,10 @@ input,select{font-family:inherit}
     body: "Click to edit text. You can type anything here. Make it long, make it short, make it punchy."
   };
 
-  // Preset Templates with Professional Themes and Alignments
+  // Expanded Preset Templates
   const TEMPLATES = {
     event: {
-      theme: 'winter', // Professional Blue
+      theme: 'winter', 
       blocks: [
         { type: 'h1', text: 'Coffee Morning', align: 'center' },
         { type: 'h2', text: 'Saturday, 10am – 12pm · St Mary’s Hall', align: 'center' },
@@ -286,7 +309,7 @@ input,select{font-family:inherit}
       ]
     },
     notice: {
-      theme: 'autumn', // Attention-grabbing but professional Orange
+      theme: 'autumn', 
       blocks: [
         { type: 'h1', text: 'Important Notice', align: 'left' },
         { type: 'shape', align: 'left' },
@@ -294,7 +317,7 @@ input,select{font-family:inherit}
       ]
     },
     schedule: {
-      theme: 'spring', // Structured Green
+      theme: 'spring', 
       blocks: [
         { type: 'h1', text: 'My Daily Routine', align: 'left' },
         { type: 'h2', text: 'Morning', align: 'left' },
@@ -304,7 +327,7 @@ input,select{font-family:inherit}
       ]
     },
     menu: {
-      theme: 'cafe', // Warm Cream
+      theme: 'cafe', 
       blocks: [
         { type: 'h1', text: 'Today’s Menu', align: 'center' },
         { type: 'shape', align: 'center' },
@@ -312,6 +335,41 @@ input,select{font-family:inherit}
         { type: 'body', text: 'Soup of the day. Garlic bread.', align: 'center' },
         { type: 'h2', text: 'Mains', align: 'center' },
         { type: 'body', text: 'Sandwiches and salad. Cake and tea.', align: 'center' }
+      ]
+    },
+    social: {
+      theme: 'medical',
+      blocks: [
+        { type: 'h1', text: 'Going to the Doctor', align: 'left' },
+        { type: 'shape', align: 'left' },
+        { type: 'body', text: 'I feel sick. I go to the doctor with Mum. I sit in the big chair.', align: 'left' },
+        { type: 'body', text: 'The doctor looks at my teeth. I am brave. I get a sticker.', align: 'left' }
+      ]
+    },
+    nowNext: {
+      theme: 'summer',
+      blocks: [
+        { type: 'h1', text: 'Now and Next', align: 'center' },
+        { type: 'h2', text: 'NOW:', align: 'left' },
+        { type: 'body', text: 'Tidy up the toys.', align: 'left' },
+        { type: 'h2', text: 'NEXT:', align: 'left' },
+        { type: 'body', text: 'Choose a game to play.', align: 'left' }
+      ]
+    },
+    welcome: {
+      theme: 'spring',
+      blocks: [
+        { type: 'h1', text: 'Welcome to Class 2!', align: 'center' },
+        { type: 'shape', align: 'center' },
+        { type: 'body', text: 'We are so happy to have you here. Please hang your coat on your peg and put your book bag in the box.', align: 'center' }
+      ]
+    },
+    rules: {
+      theme: 'autumn',
+      blocks: [
+        { type: 'h1', text: 'Our Classroom Rules', align: 'left' },
+        { type: 'shape', align: 'left' },
+        { type: 'body', text: '1. We listen to each other.\n2. We put our hands up to speak.\n3. We are kind and helpful.\n4. We look after our toys.', align: 'left' }
       ]
     }
   };
@@ -402,11 +460,8 @@ input,select{font-family:inherit}
       const tplKey = btn.dataset.tpl;
       const tpl = TEMPLATES[tplKey];
       
-      // Apply theme associated with template
-      sheet.className = sheet.className.replace(/\btheme-\S+/g, '').trim();
-      if(tpl.theme !== 'default') sheet.classList.add('theme-' + tpl.theme);
-      
-      // Update theme button active states in sidebar
+      // Apply theme via rigid data-attribute
+      sheet.setAttribute('data-theme', tpl.theme);
       document.querySelectorAll('.theme-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.theme === tpl.theme);
       });
@@ -456,35 +511,78 @@ input,select{font-family:inherit}
     reader.readAsDataURL(file);
   };
 
-  // Text Formatting Commands
-  // Ensure CSS is used for styling so it sticks properly
+  // --- TEXT FORMATTING LOGIC ---
   document.execCommand('styleWithCSS', false, true);
 
-  document.querySelectorAll('[data-cmd]').forEach(btn => {
-    btn.addEventListener('mousedown', (e) => {
-      e.preventDefault(); // Keep focus in the text area
+  // Helper: Apply to all blocks
+  function formatAllBlocks(cmd, value) {
+    document.querySelectorAll('.block[contenteditable="true"]').forEach(b => {
+      b.focus(); // Required for execCommand to work on non-selected elements sometimes
+      
+      if(cmd === 'fontName') b.style.fontFamily = value;
+      else if(cmd === 'fontSize') {
+        const sizeMap = {'2': '12px', '3': '16px', '5': '24px', '7': '32px'};
+        b.style.fontSize = sizeMap[value] || '16px';
+      }
+      else if(cmd === 'foreColor') b.style.color = value;
+      else if(cmd === 'hiliteColor') b.style.backgroundColor = value;
+      else if(cmd.startsWith('justify')) b.style.textAlign = cmd.replace('justify','').toLowerCase();
+      else if(cmd === 'bold') b.style.fontWeight = (b.style.fontWeight === 'bold') ? 'normal' : 'bold';
+      else if(cmd === 'italic') b.style.fontStyle = (b.style.fontStyle === 'italic') ? 'normal' : 'italic';
+      else if(cmd === 'underline') b.style.textDecoration = (b.style.textDecoration === 'underline') ? 'none' : 'underline';
+      else if(cmd === 'insertUnorderedList' || cmd === 'insertOrderedList') {
+        // Lists are tricky to force globally via inline style, using execCommand as fallback
+        document.execCommand(cmd, false, null);
+      }
     });
+  }
+
+  document.querySelectorAll('[data-cmd]').forEach(btn => {
+    btn.addEventListener('mousedown', (e) => { e.preventDefault(); });
     btn.onclick = () => {
-      document.execCommand(btn.dataset.cmd, false, null);
+      const cmd = btn.dataset.cmd;
+      if(applyAllChk.checked) {
+        formatAllBlocks(cmd, null);
+      } else {
+        document.execCommand(cmd, false, null);
+      }
       pushHistory();
     };
   });
 
   document.getElementById('fontSel').onchange = (e) => {
-    document.execCommand('fontName', false, e.target.value);
-    pushHistory();
-  };
-  document.getElementById('sizeSel').onchange = (e) => {
-    document.execCommand('fontSize', false, e.target.value);
+    if(applyAllChk.checked) formatAllBlocks('fontName', e.target.value);
+    else document.execCommand('fontName', false, e.target.value);
     pushHistory();
   };
   
-  // Use 'input' instead of 'onchange' so it applies immediately
+  document.getElementById('sizeSel').onchange = (e) => {
+    if(applyAllChk.checked) formatAllBlocks('fontSize', e.target.value);
+    else document.execCommand('fontSize', false, e.target.value);
+    pushHistory();
+  };
+  
   document.getElementById('textColor').addEventListener('input', (e) => {
-    document.execCommand('foreColor', false, e.target.value);
+    if(applyAllChk.checked) formatAllBlocks('foreColor', e.target.value);
+    else document.execCommand('foreColor', false, e.target.value);
   });
+  
   document.getElementById('bgColor').addEventListener('input', (e) => {
-    document.execCommand('hiliteColor', false, e.target.value);
+    if(applyAllChk.checked) formatAllBlocks('hiliteColor', e.target.value);
+    else document.execCommand('hiliteColor', false, e.target.value);
+  });
+
+  // --- ORIENTATION & THEME LOGIC ---
+  
+  // Orientation Switcher
+  document.querySelectorAll('[data-orient]').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.orient-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sheet.classList.remove('portrait', 'landscape');
+      sheet.classList.add(btn.dataset.orient);
+      pushHistory();
+    };
   });
 
   // Theme Switcher
@@ -492,18 +590,12 @@ input,select{font-family:inherit}
     btn.onclick = () => {
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      
-      // Remove all theme classes
-      sheet.className = sheet.className.replace(/\btheme-\S+/g, '').trim();
-      // Add new theme class
-      if(btn.dataset.theme !== 'default') {
-        sheet.classList.add('theme-' + btn.dataset.theme);
-      }
+      sheet.setAttribute('data-theme', btn.dataset.theme); // Rigid data-attribute application
       pushHistory();
     };
   });
 
-  // History / Undo Redo
+  // --- HISTORY / UNDO REDO ---
   function pushHistory() {
     history = history.slice(0, hIndex + 1);
     history.push(sheet.innerHTML);
@@ -529,7 +621,7 @@ input,select{font-family:inherit}
     window.saveT = setTimeout(pushHistory, 500);
   });
 
-  // Export PNG
+  // --- EXPORT & PRINT ---
   document.getElementById('pngBtn').onclick = async () => {
     document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
     document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
@@ -545,7 +637,6 @@ input,select{font-family:inherit}
     toast('PNG Exported!');
   };
 
-  // Print
   document.getElementById('printBtn').onclick = () => {
     document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
     document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
@@ -557,7 +648,7 @@ input,select{font-family:inherit}
     }, 100);
   };
 
-  // Toast
+  // --- TOAST ---
   function toast(msg) {
     const t = document.createElement('div');
     t.className = 'toast';
@@ -566,7 +657,7 @@ input,select{font-family:inherit}
     setTimeout(() => t.remove(), 2000);
   }
 
-  // Init
+  // --- INIT ---
   init();
 
 })();
