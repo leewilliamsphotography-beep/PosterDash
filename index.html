@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 /* ---------- foundations ---------- */
 :root{
@@ -79,7 +80,7 @@ button:focus-visible, .btn:focus-visible{outline-offset:1px}
 .ibtn svg{width:16px;height:16px}
 
 /* ---------- text format toolbar ---------- */
-.format-bar{display:flex;gap:4px;flex-wrap:wrap;background:var(--paper);padding:8px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;align-items:center}
+.format-bar{display:flex;gap:4px;flex-wrap:wrap;background:var(--paper);padding:8px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;align-items:center;position:relative}
 .fmt-btn{width:32px;height:32px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:4px;font-weight:bold;color:var(--ink);font-size:14px;cursor:pointer}
 .fmt-btn:hover{background:var(--line2);color:var(--accent)}
 .fmt-btn svg{width:16px;height:16px;stroke:var(--ink)}
@@ -90,11 +91,25 @@ button:focus-visible, .btn:focus-visible{outline-offset:1px}
 .apply-all-wrapper input{cursor:pointer}
 .apply-all-wrapper label{font-size:12px;color:var(--ink);cursor:pointer;font-weight:600}
 
+/* Emoji Picker */
+.emoji-picker{position:absolute;top:48px;left:8px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);z-index:20;display:grid;grid-template-columns:repeat(8, 1fr);gap:4px;width:280px;max-height:200px;overflow-y:auto;}
+.emoji-btn{font-size:20px;width:28px;height:28px;display:grid;place-items:center;background:transparent;border:none;border-radius:4px;cursor:pointer}
+.emoji-btn:hover{background:var(--line2)}
+
 /* ---------- layout ---------- */
 .app{display:grid;grid-template-columns:340px minmax(0,1fr);align-items:start}
 .rail{border-right:1px solid var(--line);padding:28px 24px 48px;position:sticky;top:var(--tb);height:calc(100vh - var(--tb));overflow-y:auto;background:var(--surface)}
 .stage{padding:48px 48px 96px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - var(--tb));background-color: #FDFDFD; background-image: linear-gradient(#EEEFEF 1px, transparent 1px), linear-gradient(90deg, #EEEFEF 1px, transparent 1px); background-size: 32px 32px;}
 body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px); background-size: 32px 32px;}
+
+/* Presentation Mode */
+body.presenting { overflow: hidden; background: #000; }
+body.presenting .topbar, body.presenting .rail { display: none !important; }
+body.presenting .app { display: block; height: 100vh; }
+body.presenting .stage { padding: 0; background: #000; overflow: auto; display: grid; place-items: center; height: 100vh; }
+body.presenting .sheet { box-shadow: none; margin: 0; }
+#exitPresentBtn { position: fixed; top: 20px; right: 20px; z-index: 100; display: none; }
+body.presenting #exitPresentBtn { display: inline-flex; }
 
 /* ---------- rail panels ---------- */
 .panel{margin-bottom:32px}
@@ -121,6 +136,19 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .seg button+button{border-left:1px solid var(--line)}
 .seg button.on{background:var(--ink);color:var(--surface)}
 
+.tog{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font:500 14px var(--f-doc);cursor:pointer}
+.tog:last-of-type{border-bottom:0}
+.tog input{appearance:none;-webkit-appearance:none;width:38px;height:22px;border-radius:999px;background:#D1D5DB;border:0;position:relative;cursor:pointer;flex:none;transition:background .18s}
+.tog input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog input:checked{background:var(--accent)}
+.tog input:checked::after{left:19px}
+
+/* Drafts */
+.draft-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:var(--paper);transition:border-color .15s}
+.draft-item:hover{border-color:var(--accent)}
+.draft-item span{font:600 13px var(--f-doc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;flex:1}
+.draft-item span:hover{color:var(--accent)}
+
 /* Block Grid */
 .block-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .block-btn{padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font:600 12px var(--f-ui);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink2);transition:all .15s}
@@ -134,7 +162,7 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 [contenteditable]:empty::before{content:attr(data-ph);color:#D1D5DB;pointer-events:none}
 [contenteditable]:focus{background:rgba(255,255,255,0.8);border-radius:6px}
 
-/* Themed Sheets - Accessible, Friendly Tones */
+/* Themed Sheets */
 .sheet[data-theme="spring"] { background-color:#F0FFF4 !important; border-top:12px solid #10B981 !important; }
 .sheet[data-theme="summer"] { background-color:#FFFDE7 !important; border-top:12px solid #F59E0B !important; }
 .sheet[data-theme="autumn"] { background-color:#FFF3E0 !important; border-top:12px solid #D14C1E !important; }
@@ -142,12 +170,30 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .sheet[data-theme="medical"] { background-color:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
 .sheet[data-theme="cafe"] { background-color:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
 
+/* Accessibility Overrides */
+.sheet.large-print .block[data-type="body"] { font-size: 24px !important; line-height: 1.8 !important; }
+.sheet.large-print .block[data-type="image"] { min-height: 250px !important; }
+
+.sheet.high-contrast { background-color:#000000 !important; border-top: none !important; }
+.sheet.high-contrast .block[data-type="h1"] { color: #FFE14D !important; }
+.sheet.high-contrast .block[data-type="h2"] { color: #FFFFFF !important; }
+.sheet.high-contrast .block[data-type="body"] { color: #FFFFFF !important; }
+.sheet.high-contrast .block[data-type="panel"] { background-color: #1A1A1A !important; color: #FFFFFF !important; border: 1px solid #FFE14D !important; }
+.sheet.high-contrast .block[data-type="shape"] { background-color: #FFE14D !important; border-color: #FFE14D !important; }
+.sheet.high-contrast .block[data-type="task"] .task-checkbox { border-color: #FFE14D !important; }
+.sheet.high-contrast .block[data-type="task"] .task-checkbox.checked { background-color: #FFE14D !important; color: #000 !important; }
+.sheet.high-contrast .attr { color: #888 !important; background: transparent !important; }
+
 /* Block Styling */
 .lines{display:flex;flex-direction:column;flex:1;padding-top:14px; gap:16px; position: relative; z-index: 2;}
+.lines.two-col{display:grid;grid-template-columns:1fr 1fr;align-items:start;}
+.lines.two-col > .block[data-type="shape"] { grid-column: 1 / -1; width: 100%; }
+
 .block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
 .block:hover{border-color:rgba(0,0,0,0.15)}
 .block:focus-within{border-color:var(--accent); border-style: solid; border-width: 1px;} 
 .block.tools-visible .block-tools{opacity:1; pointer-events:auto}
+.block.easy-read-warning{border:2px solid #ef4444 !important; background:rgba(239, 68, 68, 0.05) !important; border-radius:6px;}
 
 .block-tools{position:absolute;top:-12px;right:4px;display:flex;gap:2px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:2px;opacity:0;pointer-events:none;transition:.15s;z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.1)}
 .block-tools button{background:transparent;border:0;padding:4px;display:grid;place-items:center;width:24px;height:24px;border-radius:3px}
@@ -157,9 +203,27 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .block[data-type="h1"]{font:800 38px/1.12 'Bricolage Grotesque','Lexend',sans-serif; letter-spacing:-0.02em;}
 .block[data-type="h2"]{font:700 24px/1.2 'Bricolage Grotesque','Lexend',sans-serif; letter-spacing:-0.01em;}
 .block[data-type="body"]{font:400 16px/1.6 'Lexend',sans-serif; color:#444;}
+.block[data-type="date"]{font:600 16px/1.2 'Lexend',sans-serif; color:#64748b; text-align:center; margin-top:10px; padding:8px 12px; background:#F1F5F9; border-radius:6px; align-self:center;}
 .block[data-type="shape"]{height:12px; background:#000; border-radius:6px; margin: 10px 0; align-self: flex-start; width: 60px;}
+.block[data-type="shape"].dotted { height:0; background:transparent; border-top: 4px dotted #000; border-radius:0; width:100%; }
+.block[data-type="shape"].dashed { height:0; background:transparent; border-top: 4px dashed #000; border-radius:0; width:100%; }
 .block[data-type="panel"]{padding:24px; border-radius:12px; background:#f0f0f0; margin:10px 0; font:400 16px/1.6 'Lexend',sans-serif;}
-.block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:cover; background-position:center; border-radius:8px;}
+
+/* Task / Checklist Block */
+.block[data-type="task"]{display:flex; align-items:center; gap:12px; padding:10px; background:#F8FAFC; border-radius:8px; border:1px solid #E2E8F0; font:400 18px/1.5 'Lexend',sans-serif;}
+.task-checkbox{width:24px; height:24px; border:2px solid #64748b; border-radius:6px; cursor:pointer; display:grid; place-items:center; flex:none; background:#fff; transition:all .15s}
+.task-checkbox:hover{border-color:var(--accent)}
+.task-checkbox.checked{background:#10B981; border-color:#10B981; color:white;}
+.task-checkbox.checked::after{content:'✓'; font-size:18px; font-weight:bold;}
+.task-text{flex:1; outline:none; cursor:text;}
+.task-text.done{text-decoration:line-through; opacity:0.6;}
+
+.block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:contain; background-position:center; background-repeat:no-repeat; border-radius:8px; width:100%;}
+.block[data-type="image"].img-50{width:50%; margin:0 auto;}
+.block[data-type="image"].img-25{width:25%; margin:0 auto;}
+
+/* Badges */
+.block[data-type="badge"]{display:inline-block; padding:6px 14px; border-radius:999px; font:700 14px/1 'Lexend',sans-serif; align-self:flex-start; color:#fff; margin:0;}
 
 .empty{margin-top:14px;border:2px dashed var(--line);border-radius:12px;padding:48px 26px;text-align:center;break-inside:avoid;page-break-inside:avoid; z-index: 2;}
 .empty h3{font:800 22px 'Bricolage Grotesque','Lexend',sans-serif;margin:0 0 8px}
@@ -168,6 +232,8 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 
 .bottom-attr{display:flex;flex-direction:column;align-items:center;gap:15px;margin-top:40px;break-inside:avoid;page-break-inside:avoid; z-index: 2;}
 .attr{text-align:center;font:400 10.5px var(--f-doc);color:#B9B097;margin:0; background: rgba(255,255,255,0.8); padding: 5px 10px; border-radius: 8px;}
+#qrcode{display:none; padding:10px; border:1px solid var(--line); border-radius:8px; background:#fff;}
+#qrcode img, #qrcode canvas{margin:0 auto;display:block}
 
 #toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:80;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
 .toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:10px;font:600 13.5px var(--f-doc);box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);animation:tin .22s both;transition:opacity .3s,transform .3s}
@@ -180,7 +246,7 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
 
 @media print{
   @page{size:A4;margin:0} body{background:#fff}
-  .skip-link, .topbar,.rail,.block-tools,#toasts{display:none!important}
+  .skip-link, .topbar,.rail,.block-tools,#toasts,.presenting{display:none!important}
   .app{display:block} .stage{display:block;padding:0;background:none;min-height:0}
   .sheet{width:210mm;min-height:297mm;margin:0;border-radius:0;box-shadow:none;padding:16mm 15mm 10mm}
   .sheet.landscape{width:297mm;min-height:210mm} @page landscape{size: A4 landscape; margin: 0;} .sheet.landscape{page: landscape;}
@@ -217,11 +283,14 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
     <div class="btn-group">
       <button class="btn ghost" id="undoBtn" title="Undo (Ctrl+Z)" disabled>Undo</button>
       <button class="btn ghost" id="redoBtn" title="Redo (Ctrl+Y)" disabled>Redo</button>
+      <button class="btn ghost" id="checkBtn" title="Check Easy Read">Easy Read Check</button>
     </div>
     <div class="divider"></div>
     <div class="btn-group">
       <button class="btn ghost" id="newBtn">New</button>
+      <button class="btn ghost" id="shareBtn">Share Link</button>
       <button class="btn ghost" id="pngBtn">Export PNG</button>
+      <button class="btn ghost" id="presentBtn">Present</button>
       <button class="btn accent" id="printBtn">Print / PDF</button>
       <button class="btn ghost" id="darkToggleBtn" title="Toggle Dark Mode">Dark Mode</button>
     </div>
@@ -251,6 +320,8 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         </select>
         <input type="color" class="fmt-color" id="textColor" value="#1A1D21" title="Text Color">
         <input type="color" class="fmt-color" id="bgColor" value="#FFFF00" title="Highlight Color">
+        <button class="fmt-btn" id="emojiBtn" title="Insert Emoji">😀</button>
+        <div class="emoji-picker" id="emojiPicker" hidden></div>
       </div>
       <div class="format-bar">
         <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
@@ -279,8 +350,48 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         <button class="block-btn" data-add="h2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h12M6 8h12M6 16h12"/></svg>Subhead</button>
         <button class="block-btn" data-add="body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>Text</button>
         <button class="block-btn" data-add="panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Colored Box</button>
+        <button class="block-btn" data-add="task"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Task / Check</button>
         <button class="block-btn" data-add="shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg>Divider</button>
         <button class="block-btn" data-add="image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
+        <button class="block-btn" data-add="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Auto Date</button>
+      </div>
+      <div class="field" style="margin-top:16px;">
+        <select id="snippetSel">
+          <option value="">Insert Quick Phrase...</option>
+          <option value="Please sign in at reception.">Please sign in at reception.</option>
+          <option value="Back in 10 minutes.">Back in 10 minutes.</option>
+          <option value="Please wash your hands.">Please wash your hands.</option>
+          <option value="Choice 1\nChoice 2\nChoice 3">Choice 1, 2, 3</option>
+          <option value="Swimming at 10:00 AM.">Swimming at 10:00 AM.</option>
+          <option value="Please knock before entering.">Please knock before entering.</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="badgeSel">
+          <option value="">Insert Badge...</option>
+          <option value="Vegan">Vegan</option>
+          <option value="Gluten Free">Gluten Free</option>
+          <option value="Dairy Free">Dairy Free</option>
+          <option value="Hot">Hot</option>
+          <option value="Cold">Cold</option>
+          <option value="Wet Floor">Wet Floor</option>
+          <option value="Updated">Updated</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="iconSel">
+          <option value="">Insert Quick Icon...</option>
+          <option value="bus">Bus</option>
+          <option value="utensils">Food / Meal</option>
+          <option value="stethoscope">Doctor</option>
+          <option value="bath">Bath</option>
+          <option value="bed">Sleep</option>
+          <option value="footprints">Walk</option>
+          <option value="washing-machine">Wash Clothes</option>
+          <option value="phone">Phone</option>
+          <option value="pill">Medicine</option>
+          <option value="coffee">Tea / Coffee</option>
+        </select>
       </div>
     </section>
 
@@ -289,6 +400,13 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
       <div class="field">
         <label for="sheetFormat">Sheet format</label>
         <select id="sheetFormat"><option value="portrait">A4 Portrait</option><option value="landscape">A4 Landscape</option></select>
+      </div>
+      <div class="field">
+        <label>Layout Columns</label>
+        <div class="seg" id="layoutSeg">
+          <button type="button" data-cols="1" class="on">1 Column</button>
+          <button type="button" data-cols="2">2 Columns</button>
+        </div>
       </div>
       <div class="field">
         <label for="themeSel">Poster theme</label>
@@ -302,10 +420,56 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
           <option value="cafe">Cafe / Menu (Cream)</option>
         </select>
       </div>
+      
+      <label class="tog"><span>Large Print Mode</span><input type="checkbox" id="largePrintTog"></label>
+      <label class="tog"><span>High-Contrast Sheet</span><input type="checkbox" id="hcTog"></label>
     </section>
 
     <section class="panel">
-      <h2 class="k"><b>04</b>About</h2>
+      <h2 class="k"><b>04</b>Background Designer</h2>
+      <div class="field">
+        <label for="bgColorPicker">Base Color</label>
+        <input type="color" id="bgColorPicker" value="#FFFFFF" style="width:100%; height:36px; border:1px solid var(--line); border-radius:6px; cursor:pointer; background:none;">
+      </div>
+      <div class="field">
+        <label for="patternSel">Pattern Style</label>
+        <select id="patternSel">
+          <option value="none">None</option>
+          <option value="dots">Subtle Dots</option>
+          <option value="grid">Engineering Grid</option>
+          <option value="diag">Diagonal Lines</option>
+          <option value="waves">Soft Waves</option>
+          <option value="clouds">Clouds</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="patternColorPicker">Pattern Color</label>
+        <input type="color" id="patternColorPicker" value="#F1F5F9" style="width:100%; height:36px; border:1px solid var(--line); border-radius:6px; cursor:pointer; background:none;">
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>05</b>QR Code & Links</h2>
+      <div class="field" style="display:flex; gap:8px; align-items:center;">
+        <input type="checkbox" id="qrToggle" style="width:20px; height:20px; cursor:pointer; accent-color: var(--accent);">
+        <label for="qrToggle" style="margin:0; text-transform:none; font-weight:600; color:var(--ink);">Include QR Code</label>
+      </div>
+      <div class="field" id="qrUrlField" hidden>
+        <input type="text" id="qrUrl" placeholder="https://your-link.com">
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>06</b>My Drafts</h2>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button class="btn small" id="saveDraftBtn" style="flex:1; background:var(--paper); border-color:var(--line);">Save Draft</button>
+        <button class="btn small" id="dupTomorrowBtn" style="flex:1; background:var(--paper); border-color:var(--line);">Dup for Tomorrow</button>
+      </div>
+      <div id="draftList"></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>07</b>About</h2>
       <p class="about">Everything runs in your browser — no account, no tracking, nothing uploaded. Your poster saves automatically on this device.</p>
       <p class="about">This tool is designed to help care home staff and support workers create accessible, Easy Read materials in seconds.</p>
     </section>
@@ -320,12 +484,14 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         <div class="tpl" id="tplsEmpty"></div>
       </div>
       <div class="bottom-attr">
+        <div id="qrcode"></div>
         <p class="attr">PosterD45h by Lee Williams</p>
       </div>
     </div>
   </section>
 </main>
 
+<button id="exitPresentBtn" class="btn accent" hidden>Exit Presentation</button>
 <input type="file" id="imageUpload" class="hidden" accept="image/*" style="display:none;">
 <div id="toasts" aria-live="polite"></div>
 
@@ -339,91 +505,64 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-const LS_KEY='posterd45h.doc.carehome.v2';
+const LS_KEY='posterd45h.doc.carehome.v5';
+const LS_DRAFTS='posterd45h.drafts';
 const LS_DARK='posterd45h.dark';
 
-// Care Home Focused Presets - Explicitly filled with text
+const BADGES = {
+  'Vegan': { bg: '#10B981', color: '#FFFFFF' },
+  'Gluten Free': { bg: '#F59E0B', color: '#FFFFFF' },
+  'Dairy Free': { bg: '#3B82F6', color: '#FFFFFF' },
+  'Hot': { bg: '#EF4444', color: '#FFFFFF' },
+  'Cold': { bg: '#06B6D4', color: '#FFFFFF' },
+  'Wet Floor': { bg: '#EAB308', color: '#000000' },
+  'Updated': { bg: '#64748B', color: '#FFFFFF' }
+};
+
 const TEMPLATES = {
-  dailyMenu: { 
-    name:'Daily Menu', 
-    theme:'cafe', 
-    bgColor:'#FBF7F0', 
-    pattern:'none', 
-    patternColor:'#EAE0D5', 
-    blocks:[
-      { type:'h1', text:'Today’s Menu', align:'center', style:{ color:'#4A3B2A', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
-      { type:'panel', text:'Breakfast (8:00 AM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend' } },
-      { type:'body', text:'Porridge with honey\nToast with butter\nTea or Coffee', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
-      { type:'panel', text:'Lunch (12:30 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
-      { type:'body', text:'Beef stew with dumplings\nVegetable soup with bread roll\nFresh fruit', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
-      { type:'panel', text:'Tea / Supper (5:00 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
-      { type:'body', text:'Cheese and crackers\nHam sandwiches\nCup of tea', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } }
-    ]
-  },
-  nowNext: { 
-    name:'Now & Next Board', 
-    theme:'summer', 
-    bgColor:'#FFFDE7', 
-    pattern:'none', 
-    patternColor:'#FEF3C7', 
-    blocks:[
-      { type:'h1', text:'Now and Next', align:'center', style:{ color:'#92400E', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
-      { type:'panel', text:'NOW', align:'center', style:{ backgroundColor:'#F59E0B', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
-      { type:'panel', text:'Tidy up the toys.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#92400E', padding:'25px', borderRadius:'0 0 8px 8px', fontSize:'22px', border:'3px solid #F59E0B', borderTop:'none' } },
-      { type:'panel', text:'NEXT', align:'center', style:{ backgroundColor:'#10B981', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
-      { type:'panel', text:'Choose a game to play.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#065F46', padding:'25px', borderRadius:'0 0 8px 8px', fontSize:'22px', border:'3px solid #10B981', borderTop:'none' } }
-    ]
-  },
-  timetable: { 
-    name:'Visual Timetable', 
-    theme:'spring', 
-    bgColor:'#F0FFF4', 
-    pattern:'grid', 
-    patternColor:'#D1FAE5', 
-    blocks:[
-      { type:'h1', text:'My Day', align:'left', style:{ color:'#065F46', fontFamily:'Lexend', fontSize:'36px', marginBottom:'20px' } },
-      { type:'panel', text:'Morning: Reading time', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
-      { type:'panel', text:'Midday: Play outside', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
-      { type:'panel', text:'Lunch at 12:00', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
-      { type:'panel', text:'Afternoon: Art and music', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } }
-    ]
-  },
-  event: { 
-    name:'Activity Poster', 
-    theme:'autumn', 
-    bgColor:'#FFF3E0', 
-    pattern:'dots', 
-    patternColor:'#FFEDD5', 
-    blocks:[
-      { type:'h1', text:'Coffee Morning', align:'center', style:{ color:'#7C2D12', fontFamily:'Lexend', fontSize:'48px' } },
-      { type:'h2', text:'Saturday, 10am – 12pm', align:'center', style:{ color:'#9A3412', fontFamily:'Lexend', fontSize:'24px' } },
-      { type:'shape', style:{ width:'100px', height:'4px', backgroundColor:'#D14C1E', borderRadius:'2px', margin:'20px auto' } },
-      { type:'panel', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome!', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #D14C1E', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#7C2D12' } }
-    ]
-  },
-  social: { 
-    name:'Social Story', 
-    theme:'medical', 
-    bgColor:'#F0FDFA', 
-    pattern:'dots', 
-    patternColor:'#CCFBF1', 
-    blocks:[
-      { type:'panel', text:'Going to the Doctor', align:'left', style:{ backgroundColor:'#14B8A6', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
-      { type:'panel', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair. The doctor looks at my teeth. I am brave. I get a sticker.', align:'left', style:{ backgroundColor:'#FFFFFF', color:'#115E59', padding:'25px', borderRadius:'0 0 12px 12px', fontSize:'18px', border:'2px solid #14B8A6', borderTop:'none', lineHeight:'1.8' } }
-    ]
-  },
-  notice: { 
-    name:'Visitor Notice', 
-    theme:'winter', 
-    bgColor:'#F0F9FF', 
-    pattern:'grid', 
-    patternColor:'#DBEAFE', 
-    blocks:[
-      { type:'h1', text:'Important Notice', align:'center', style:{ color:'#1E3A8A', fontFamily:'Lexend', fontSize:'40px' } },
-      { type:'shape', style:{ width:'100%', height:'4px', backgroundColor:'#3B82F6', borderRadius:'2px', margin:'10px 0 20px 0' } },
-      { type:'panel', text:'Family visiting hours are from 2:00 PM to 4:00 PM. Please sign in at the front desk.', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #3B82F6', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#1E3A8A' } }
-    ]
-  }
+  dailyMenu: { name:'Daily Menu', theme:'cafe', bgColor:'#FBF7F0', pattern:'none', patternColor:'#EAE0D5', blocks:[
+    { type:'h1', text:'Today’s Menu', align:'center', style:{ color:'#4A3B2A', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
+    { type:'date' },
+    { type:'panel', text:'Breakfast (8:00 AM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend' } },
+    { type:'body', text:'Porridge with honey\nToast with butter\nTea or Coffee', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
+    { type:'badge', text:'Vegan' },
+    { type:'badge', text:'Hot' },
+    { type:'panel', text:'Lunch (12:30 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+    { type:'body', text:'Beef stew with dumplings\nVegetable soup with bread roll\nFresh fruit', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
+    { type:'panel', text:'Tea / Supper (5:00 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+    { type:'body', text:'Cheese and crackers\nHam sandwiches\nCup of tea', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } }
+  ]},
+  nowNext: { name:'Now & Next Board', theme:'summer', bgColor:'#FFFDE7', pattern:'none', patternColor:'#FEF3C7', blocks:[
+    { type:'h1', text:'Now and Next', align:'center', style:{ color:'#92400E', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
+    { type:'panel', text:'NOW', align:'center', style:{ backgroundColor:'#F59E0B', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
+    { type:'task', text:'Tidy up the toys.' },
+    { type:'panel', text:'NEXT', align:'center', style:{ backgroundColor:'#10B981', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+    { type:'task', text:'Choose a game to play.' }
+  ]},
+  timetable: { name:'Visual Timetable', theme:'spring', bgColor:'#F0FFF4', pattern:'grid', patternColor:'#D1FAE5', blocks:[
+    { type:'h1', text:'My Day', align:'left', style:{ color:'#065F46', fontFamily:'Lexend', fontSize:'36px', marginBottom:'20px' } },
+    { type:'date' },
+    { type:'task', text:'Morning: Reading time' },
+    { type:'task', text:'Midday: Play outside' },
+    { type:'task', text:'Lunch at 12:00' },
+    { type:'task', text:'Afternoon: Art and music' }
+  ]},
+  event: { name:'Activity Poster', theme:'autumn', bgColor:'#FFF3E0', pattern:'dots', patternColor:'#FFEDD5', blocks:[
+    { type:'h1', text:'Coffee Morning', align:'center', style:{ color:'#7C2D12', fontFamily:'Lexend', fontSize:'48px' } },
+    { type:'h2', text:'Saturday, 10am – 12pm', align:'center', style:{ color:'#9A3412', fontFamily:'Lexend', fontSize:'24px' } },
+    { type:'shape', style:{ width:'100px', height:'4px', backgroundColor:'#D14C1E', borderRadius:'2px', margin:'20px auto' } },
+    { type:'panel', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome!', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #D14C1E', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#7C2D12' } }
+  ]},
+  social: { name:'Social Story', theme:'medical', bgColor:'#F0FDFA', pattern:'dots', patternColor:'#CCFBF1', blocks:[
+    { type:'panel', text:'Going to the Doctor', align:'left', style:{ backgroundColor:'#14B8A6', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
+    { type:'panel', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair. The doctor looks at my teeth. I am brave. I get a sticker.', align:'left', style:{ backgroundColor:'#FFFFFF', color:'#115E59', padding:'25px', borderRadius:'0 0 12px 12px', fontSize:'18px', border:'2px solid #14B8A6', borderTop:'none', lineHeight:'1.8' } }
+  ]},
+  notice: { name:'Visitor Notice', theme:'winter', bgColor:'#F0F9FF', pattern:'grid', patternColor:'#DBEAFE', blocks:[
+    { type:'h1', text:'Important Notice', align:'center', style:{ color:'#1E3A8A', fontFamily:'Lexend', fontSize:'40px' } },
+    { type:'shape', style:{ width:'100%', height:'4px', backgroundColor:'#3B82F6', borderRadius:'2px', margin:'10px 0 20px 0' } },
+    { type:'date' },
+    { type:'panel', text:'Family visiting hours are from 2:00 PM to 4:00 PM. Please sign in at the front desk.', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #3B82F6', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#1E3A8A' } }
+  ]}
 };
 
 let uidSeq=1;
@@ -432,10 +571,15 @@ const uid=()=>'b'+(uidSeq++)+Date.now().toString(36);
 function newDoc(){
   return {
     format:'portrait',
+    cols:1,
     theme:'default',
     bgColor:'#FFFFFF',
     pattern:'none',
     patternColor:'#F1F5F9',
+    largePrint:false,
+    highContrast:false,
+    useQR:false,
+    qrUrl:'',
     blocks:[
       { uid: uid(), type: 'h1', text: 'Main Headline', align: 'center' },
       { uid: uid(), type: 'h2', text: 'Sub Heading', align: 'center' },
@@ -467,6 +611,11 @@ let saveT=null;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){}},350);}
 
 function applyBackground() {
+  if(doc.highContrast) {
+    sheet.style.backgroundColor = '#000000';
+    sheet.style.backgroundImage = 'none';
+    return;
+  }
   sheet.style.backgroundColor = doc.bgColor || '#FFFFFF';
   if (doc.pattern === 'dots') {
     sheet.style.backgroundImage = `radial-gradient(${doc.patternColor} 2px, transparent 2px)`;
@@ -476,8 +625,30 @@ function applyBackground() {
     sheet.style.backgroundSize = '24px 24px';
   } else if (doc.pattern === 'diag') {
     sheet.style.backgroundImage = `repeating-linear-gradient(45deg, ${doc.patternColor} 0, ${doc.patternColor} 1px, transparent 1px, transparent 12px)`;
+  } else if (doc.pattern === 'waves') {
+    sheet.style.backgroundImage = `radial-gradient(circle at 50% 50%, transparent 9px, ${doc.patternColor} 10px, transparent 11px)`;
+    sheet.style.backgroundSize = '30px 30px';
+  } else if (doc.pattern === 'clouds') {
+    sheet.style.backgroundImage = `radial-gradient(${doc.patternColor} 20%, transparent 0), radial-gradient(${doc.patternColor} 20%, transparent 0)`;
+    sheet.style.backgroundSize = '60px 60px';
+    sheet.style.backgroundPosition = '0 0, 30px 30px';
   } else {
     sheet.style.backgroundImage = 'none';
+  }
+}
+
+function applyQR() {
+  const qrEl = $('#qrcode');
+  qrEl.innerHTML = '';
+  if(doc.useQR) {
+    qrEl.style.display = 'block';
+    if(doc.qrUrl) {
+      new QRCode(qrEl, { text: doc.qrUrl, width: 80, height: 80, colorDark: doc.highContrast ? "#FFE14D" : "#000000", colorLight: doc.highContrast ? "#000000" : "#FFFFFF", correctLevel: QRCode.CorrectLevel.M });
+    } else {
+      qrEl.innerHTML = '<div style="width:80px;height:80px;border:1px dashed #ccc;display:grid;place-items:center;color:#ccc;font-size:10px;">URL?</div>';
+    }
+  } else {
+    qrEl.style.display = 'none';
   }
 }
 
@@ -485,7 +656,11 @@ function renderAll(){
   sheet.classList.toggle('landscape', doc.format === 'landscape');
   sheet.classList.toggle('portrait', doc.format === 'portrait');
   sheet.setAttribute('data-theme', doc.theme);
+  sheet.classList.toggle('large-print', !!doc.largePrint);
+  sheet.classList.toggle('high-contrast', !!doc.highContrast);
+  
   applyBackground();
+  applyQR();
   
   $('#sheetFormat').value=doc.format;
   $('#themeSel').value=doc.theme;
@@ -493,11 +668,19 @@ function renderAll(){
   $('#patternSel').value=doc.pattern || 'none';
   $('#patternColorPicker').value=doc.patternColor || '#E3E5E8';
   
+  $$('#layoutSeg button').forEach(b => b.classList.toggle('on', parseInt(b.dataset.cols) === (doc.cols || 1)));
+  $('#largePrintTog').checked = !!doc.largePrint;
+  $('#hcTog').checked = !!doc.highContrast;
+  
+  $('#qrToggle').checked = doc.useQR;
+  $('#qrUrlField').hidden = !doc.useQR;
+  $('#qrUrl').value = doc.qrUrl || '';
+  
   renderBlocks();
 }
 
 function renderBlocks(){
-  // Map blocks to HTML, explicitly replacing \n with <br> so line breaks show up
+  linesEl.className = 'lines' + (doc.cols === 2 ? ' two-col' : '');
   linesEl.innerHTML = doc.blocks.map(blockHTML).join('');
   $('#empty').hidden = doc.blocks.length > 0;
   attachBlockListeners();
@@ -512,24 +695,60 @@ function blockHTML(b){
   const fullStyle = `style="${alignStyle}${styleStr}"`;
   const ph = b.type === 'h1' ? 'Heading' : (b.type === 'h2' ? 'Subhead' : (b.type === 'panel' ? 'Panel Text' : 'Text'));
   
-  // Crucial fix: convert \n to <br> so text isn't blank or clumped together
+  if(b.type === 'date'){
+    const offset = b.dateOffset || 0;
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    const dateStr = d.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return `<div class="block" data-type="date" data-uid="${b.uid}">Updated: ${dateStr}</div>` + getToolsHTML(b.uid, b.type);
+  }
+  
+  if(b.type === 'badge'){
+    const badgeStyle = BADGES[b.text] || { bg: '#64748b', color: '#fff' };
+    return `<div class="block" data-type="badge" data-uid="${b.uid}" style="background-color:${badgeStyle.bg}; color:${badgeStyle.color};" contenteditable="true">${esc(b.text || 'Badge')}</div>` + getToolsHTML(b.uid, b.type);
+  }
+
+  if(b.type === 'task'){
+    const checked = b.checked ? 'checked' : '';
+    const done = b.checked ? 'done' : '';
+    return `<div class="block" data-type="task" data-uid="${b.uid}">
+              <div class="task-checkbox ${checked}"></div>
+              <span class="task-text ${done}" contenteditable="true" data-ph="Task text">${esc(b.text || 'Task')}</span>
+            </div>` + getToolsHTML(b.uid, b.type);
+  }
+  
+  // Convert \n to <br>
   const textContent = esc(b.text || '').replace(/\n/g, '<br>');
   
+  let classes = 'block';
+  if (b.easyReadWarning) classes += ' easy-read-warning';
+  if (b.type === 'image' && b.imgSize) classes += ` img-${b.imgSize}`;
+  if (b.type === 'shape' && b.dividerType) classes += ` ${b.dividerType}`;
+  
   if(b.type === 'shape'){
-    return `<div class="block" data-type="shape" data-uid="${b.uid}" ${fullStyle}></div>` + getToolsHTML(b.uid);
+    return `<div class="${classes}" data-type="shape" data-uid="${b.uid}" ${fullStyle}></div>` + getToolsHTML(b.uid, b.type);
   } else if(b.type === 'image'){
     const imgSrc = b.imgSrc ? `background-image:url('${b.imgSrc}');` : '';
-    return `<div class="block" data-type="image" data-uid="${b.uid}" style="${imgSrc}${styleStr}"></div>` + getToolsHTML(b.uid);
+    return `<div class="${classes}" data-type="image" data-uid="${b.uid}" style="${imgSrc}${styleStr}"></div>` + getToolsHTML(b.uid, b.type);
   } else {
-    return `<div class="block" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" data-ph="${ph}" ${fullStyle}>${textContent}</div>` + getToolsHTML(b.uid);
+    return `<div class="${classes}" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" data-ph="${ph}" ${fullStyle}>${textContent}</div>` + getToolsHTML(b.uid, b.type);
   }
 }
 
-function getToolsHTML(uidVal) {
+function getToolsHTML(uidVal, type) {
+  let extraBtns = '';
+  if(type === 'image') {
+    extraBtns += `<button data-act="resize" title="Resize Image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>`;
+  }
+  if(type === 'shape') {
+    extraBtns += `<button data-act="dividerStyle" title="Cycle Divider Style"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg></button>`;
+  }
   return `
     <div class="block-tools" data-uid="${uidVal}">
       <button data-act="up" title="Move Up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
       <button data-act="down" title="Move Down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <button data-act="dup" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+      ${extraBtns}
       <button data-act="del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
     </div>
   `;
@@ -552,12 +771,43 @@ function attachBlockListeners() {
         [doc.blocks[index], doc.blocks[index+1]] = [doc.blocks[index+1], doc.blocks[index]];
       } else if(act === 'del') {
         doc.blocks.splice(index, 1);
+      } else if(act === 'dup') {
+        const b = doc.blocks[index];
+        const newBlock = JSON.parse(JSON.stringify(b));
+        newBlock.uid = uid();
+        doc.blocks.splice(index + 1, 0, newBlock);
+      } else if(act === 'resize') {
+        const b = doc.blocks[index];
+        const sizes = ['100', '50', '25'];
+        const current = b.imgSize || '100';
+        const nextIndex = (sizes.indexOf(current) + 1) % sizes.length;
+        b.imgSize = sizes[nextIndex];
+      } else if(act === 'dividerStyle') {
+        const b = doc.blocks[index];
+        const styles = ['solid', 'dotted', 'dashed'];
+        const current = b.dividerType || 'solid';
+        const nextIndex = (styles.indexOf(current) + 1) % styles.length;
+        b.dividerType = styles[nextIndex];
       }
       pushHistory(); renderBlocks(); save();
     });
     tools.dataset.attached = "true";
   });
 }
+
+// Click listener for Task Checkboxes
+linesEl.addEventListener('click', (e) => {
+  const checkbox = e.target.closest('.task-checkbox');
+  if (checkbox) {
+    const block = checkbox.closest('.block');
+    const uidVal = block.dataset.uid;
+    const b = doc.blocks.find(x => x.uid === uidVal);
+    if(b) {
+      b.checked = !b.checked;
+      pushHistory(); renderBlocks(); save();
+    }
+  }
+});
 
 // Add Block
 document.querySelectorAll('[data-add]').forEach(btn => {
@@ -569,10 +819,39 @@ document.querySelectorAll('[data-add]').forEach(btn => {
     }
     const newBlock = { uid: uid(), type: type, text: type === 'h1' ? 'Main Headline' : (type === 'h2' ? 'Sub Heading' : 'Enter text here...') };
     if(type === 'panel') newBlock.text = 'Enter text here...';
+    if(type === 'task') newBlock.text = 'New task';
     doc.blocks.push(newBlock);
     pushHistory(); renderBlocks(); save();
   };
 });
+
+// Quick Badges
+ $('#badgeSel').onchange = (e) => {
+  if(!e.target.value) return;
+  const newBlock = { uid: uid(), type: 'badge', text: e.target.value };
+  doc.blocks.push(newBlock);
+  pushHistory(); renderBlocks(); save();
+  e.target.value = '';
+};
+
+// Quick Phrases
+ $('#snippetSel').onchange = (e) => {
+  if(!e.target.value) return;
+  const newBlock = { uid: uid(), type: 'body', text: e.target.value, align: 'left' };
+  doc.blocks.push(newBlock);
+  pushHistory(); renderBlocks(); save();
+  e.target.value = '';
+};
+
+// Quick Icons
+ $('#iconSel').onchange = (e) => {
+  if(!e.target.value) return;
+  const iconUrl = `https://api.iconify.design/lucide/${e.target.value}.svg?color=%23222`;
+  const newBlock = { uid: uid(), type: 'image', imgSrc: iconUrl, imgSize: '25', align: 'center' };
+  doc.blocks.push(newBlock);
+  pushHistory(); renderBlocks(); save();
+  e.target.value = '';
+};
 
 // Image Upload
 imageUpload.onchange = (e) => {
@@ -580,7 +859,7 @@ imageUpload.onchange = (e) => {
   if(!file) return;
   const reader = new FileReader();
   reader.onload = (ev) => {
-    const newBlock = { uid: uid(), type: 'image', imgSrc: ev.target.result };
+    const newBlock = { uid: uid(), type: 'image', imgSrc: ev.target.result, imgSize: '100' };
     doc.blocks.push(newBlock);
     pushHistory(); renderBlocks(); save();
     imageUpload.value = '';
@@ -635,6 +914,44 @@ document.querySelectorAll('.fmt-btn[data-cmd]').forEach(btn => {
   };
 });
 
+// Emoji Picker
+const emojis = ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔','🤐','🤨','😐','😑','😶','😏','😒','🙄','😬','🤥','😌','😔','😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🤧','🥵','🥶','😵','🤯','🤠','🥳','😎','🤓','🧐','😕','😟','🙁','😮','😯','😲','😳','🥺','😦','😧','😨','😰','😥','😢','😭','😱','😖','😣','😞','😓','😩','😫','🥱','😤','😡','😠','🤬','😈','👿','💀','☠','💩','🤡','👹','👺','👻','👽','👾','🤖','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🍔','🍟','🍕','🌭','🥪','🌮','🌯','🥙','🥚','🍳','🥘','🍲','🥣','🥗','🍿','🧂','🥫','🍱','🍘','🍙','🍚','🍛','🍜','🍝','🍠','🍢','🍣','🍤','🍥','🥮','🍡','🥟','🥠','🥡','🦀','🦞','🦐','🦑','🦛','🍦','🍨','🍧','🍩','🍪','🎂','🍰','🧁','🥧','🍫','🍬','🍭','🍮','🍯','🍼','🥛','☕','🍵','🍶','🍾','🍷','🍸','🍹','🍺','🍻','🥂','🥃','🥤','🧃','🧉','🧊','🚗','🚕','🚙','🚌','🚎','🏎','🚓','🚑','🚒','🚐','🚚','🚛','🚜','🛴','🚲','🛵','🏍','🚨','🚔','🚍','🚘','🚖','🚡','🚠','🚟','🚃','🚋','🚞','🚝','🚄','🚅','🚈','🚂','🚆','🚇','🚊','🚉','✈','🛫','🛬','🛩','💺','🛰','🚀','🛸','🚁','🛶','⛵','🚤','🛥','🛳','⛴','🚢','⚓','⛽','🚧','🚦','🚥','🚏','🗺','🗿','🗽','🗼','🏰','🏯','🏟','🎡','🎢','🎠','⛲','⛱','🏖','🏝','🏜','🌋','⛰','🏔','🗻','🏕','⛺','🏠','🏡','🏘','🏚','🏗','🏭','🏢','🏬','🏣','🏤','🏥','🏦','🏨','🏪','🏫','💰','💴','💵','💶','💷','💸','💳','🧾','💱','💲','✉','📧','📨','📩','📤','📥','📦','📫','📪','📬','📭','📮','🗳','✏','✒','🖋','🖊','🖌','🖍','📝','💼','📁','📂','🗂','📅','📆','🗒','🗓','📇','📈','📉','📊','📋','📌','📍','📎','🖇','📏','📐','✂','🗃','🗄','🗑','🔒','🔓','🔏','🔐','🔑','🗝','🔨','⛏','⚒','🛠','🗡','⚔','🔫','🏹','🛡','🔧','🔩','⚙','🗜','⚖','🔗','⛓','🧰','🧲','🧪','🧫','🧬','🔬','🔭','📡','💉','💊','🚪','🛏','🛋','🚽','🚿','🛁','🧴','🧷','🧹','🧺','🧻','🛒','⚰','⚱'];
+const emojiBtn = $('#emojiBtn');
+const emojiPicker = $('#emojiPicker');
+let activeBlock = null;
+
+document.addEventListener('selectionchange', () => {
+  if (document.activeElement.classList.contains('block') || document.activeElement.classList.contains('task-text')) {
+    activeBlock = document.activeElement;
+  }
+});
+
+emojiBtn.onclick = (e) => {
+  e.stopPropagation();
+  if(emojiPicker.hidden) {
+    emojiPicker.innerHTML = emojis.map(em => `<button class="emoji-btn">${em}</button>`).join('');
+    emojiPicker.hidden = false;
+  } else {
+    emojiPicker.hidden = true;
+  }
+};
+
+emojiPicker.addEventListener('click', (e) => {
+  const btn = e.target.closest('.emoji-btn');
+  if(!btn) return;
+  if(activeBlock) {
+    activeBlock.focus();
+    document.execCommand('insertText', false, btn.textContent);
+  }
+  pushHistory(); save();
+});
+
+document.addEventListener('click', (e) => {
+  if(!emojiPicker.hidden && !e.target.closest('#emojiPicker') && !e.target.closest('#emojiBtn')) {
+    emojiPicker.hidden = true;
+  }
+});
+
  $('#fontSel').onchange = (e) => {
   if(applyAllChk.checked) formatAllBlocks('fontName', e.target.value);
   else document.execCommand('fontName', false, e.target.value);
@@ -657,6 +974,12 @@ document.querySelectorAll('.fmt-btn[data-cmd]').forEach(btn => {
 // Settings Listeners
  $('#sheetFormat').onchange = (e) => { doc.format = e.target.value; pushHistory(); renderAll(); save(); };
 
+ $('#layoutSeg').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if(!b) return;
+  doc.cols = parseInt(b.dataset.cols);
+  pushHistory(); renderAll(); save();
+});
+
  $('#themeSel').onchange = (e) => { 
   doc.theme = e.target.value; 
   doc.bgColor = '#FFFFFF'; 
@@ -664,23 +987,29 @@ document.querySelectorAll('.fmt-btn[data-cmd]').forEach(btn => {
   pushHistory(); renderAll(); save(); 
 };
 
+ $('#largePrintTog').onchange = (e) => { doc.largePrint = e.target.checked; pushHistory(); renderAll(); save(); };
+ $('#hcTog').onchange = (e) => { doc.highContrast = e.target.checked; pushHistory(); renderAll(); save(); };
+
  $('#bgColorPicker').addEventListener('input', (e) => { doc.bgColor = e.target.value; applyBackground(); save(); });
  $('#patternSel').onchange = (e) => { doc.pattern = e.target.value; applyBackground(); pushHistory(); save(); };
  $('#patternColorPicker').addEventListener('input', (e) => { doc.patternColor = e.target.value; applyBackground(); save(); });
+
+ $('#qrToggle').onchange = (e) => { doc.useQR = e.target.checked; $('#qrUrlField').hidden = !doc.useQR; pushHistory(); renderAll(); save(); };
+ $('#qrUrl').addEventListener('input', (e) => { doc.qrUrl = e.target.value.trim(); applyQR(); save(); });
 
  $('#undoBtn').onclick = undo;
  $('#redoBtn').onclick = redo;
 
 // Block Text Edits
 linesEl.addEventListener('focusin', (e) => {
-  const block = e.target.closest('.block[contenteditable]');
+  const block = e.target.closest('[contenteditable="true"]');
   if(block) {
     const uidVal = block.dataset.uid;
     block.oninput = () => {
       const b = doc.blocks.find(x => x.uid === uidVal);
       if(b) {
-        // Store raw text with line breaks
         b.text = block.innerText; 
+        if(b.easyReadWarning) { b.easyReadWarning = false; block.classList.remove('easy-read-warning'); }
       }
       save();
     };
@@ -693,6 +1022,43 @@ linesEl.addEventListener('focusin', (e) => {
   if(confirm('Start a new poster? This will clear the current sheet.')) {
     doc = newDoc(); pushHistory(); renderAll(); save(); toast('Fresh sheet ready.');
   }
+};
+
+ $('#shareBtn').onclick = async () => {
+  try {
+    const str = JSON.stringify(doc);
+    const hash = btoa(unescape(encodeURIComponent(str)));
+    history.replaceState(null, '', '#' + hash);
+    await navigator.clipboard.writeText(location.href);
+    toast('Share link copied to clipboard!');
+  } catch(e) {
+    toast('Failed to copy link. Copy from address bar.', 'alert');
+  }
+};
+
+ $('#checkBtn').onclick = () => {
+  let issues = 0;
+  doc.blocks.forEach(b => {
+    if(b.text) {
+      const words = b.text.trim().split(/\s+/);
+      if(words.length > 15) {
+        b.easyReadWarning = true;
+        issues++;
+      } else {
+        b.easyReadWarning = false;
+      }
+    }
+  });
+  pushHistory(); renderBlocks(); save();
+  if(issues > 0) toast(`Found ${issues} blocks with over 15 words. Keep it short!`, 'alert');
+  else toast('All text blocks pass the Easy Read check!', 'check');
+};
+
+ $('#presentBtn').onclick = () => {
+  document.body.classList.add('presenting');
+};
+ $('#exitPresentBtn').onclick = () => {
+  document.body.classList.remove('presenting');
 };
 
  $('#pngBtn').onclick = async () => {
@@ -715,6 +1081,52 @@ linesEl.addEventListener('focusin', (e) => {
   setTimeout(() => window.print(), 100);
 };
 
+// Drafts Logic
+function getDrafts() { try { return JSON.parse(localStorage.getItem(LS_DRAFTS) || '[]'); } catch(e) { return []; } }
+function saveDrafts(drafts) { localStorage.setItem(LS_DRAFTS, JSON.stringify(drafts)); }
+function renderDrafts() {
+  const list = getDrafts();
+  const c = $('#draftList');
+  if(!list.length) { c.innerHTML = '<p class="hint" style="margin-top:0;">No saved drafts yet.</p>'; return; }
+  c.innerHTML = list.map(d => `<div class="draft-item"><span data-load-draft="${d.id}">${esc(d.name)}</span><button class="ibtn danger" data-del-draft="${d.id}" aria-label="Delete draft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>`).join('');
+}
+ $('#saveDraftBtn').onclick = () => {
+  const name = prompt('Name this draft:', doc.blocks[0] && doc.blocks[0].text ? doc.blocks[0].text.substring(0, 20) : 'Untitled');
+  if(name === null) return;
+  const drafts = getDrafts();
+  drafts.push({ id: uid(), name: name.trim() || 'Untitled', doc: JSON.parse(JSON.stringify(doc)) });
+  saveDrafts(drafts); renderDrafts(); toast('Draft saved!', 'check');
+};
+ $('#dupTomorrowBtn').onclick = () => {
+  const drafts = getDrafts();
+  const clonedDoc = JSON.parse(JSON.stringify(doc));
+  clonedDoc.blocks.forEach(b => {
+    if(b.type === 'date') {
+      b.dateOffset = (b.dateOffset || 0) + 1;
+    }
+  });
+  const name = prompt('Name this draft:', (doc.blocks[0] && doc.blocks[0].text ? doc.blocks[0].text.substring(0, 20) : 'Untitled') + ' (Tomorrow)');
+  if(name === null) return;
+  drafts.push({ id: uid(), name: name.trim() || 'Untitled', doc: clonedDoc });
+  saveDrafts(drafts); renderDrafts(); toast('Duplicated for tomorrow!', 'check');
+};
+document.addEventListener('click', e => {
+  const loadBtn = e.target.closest('[data-load-draft]');
+  const delBtn = e.target.closest('[data-del-draft]');
+  if(loadBtn) {
+    const drafts = getDrafts();
+    const d = drafts.find(x => x.id === loadBtn.dataset.load_draft);
+    if(d) { doc = JSON.parse(JSON.stringify(d.doc)); pushHistory(); renderAll(); save(); toast('Draft loaded!', 'check'); }
+  }
+  if(delBtn) {
+    if(confirm('Delete this draft permanently?')) {
+      let drafts = getDrafts();
+      drafts = drafts.filter(x => x.id !== delBtn.dataset.del_draft);
+      saveDrafts(drafts); renderDrafts(); toast('Draft deleted.', 'check');
+    }
+  }
+});
+
 // Dark Mode
 const darkToggleBtn = $('#darkToggleBtn');
 function applyDarkMode(isDark) {
@@ -736,16 +1148,34 @@ function toast(msg, kind='info') {
 function boot(){
   const isDark = localStorage.getItem(LS_DARK) === '1';
   applyDarkMode(isDark);
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if(raw) {
-      const o = JSON.parse(raw);
-      doc = Object.assign(newDoc(), o);
+  
+  // Check for Share Link in URL
+  if(location.hash.length > 1) {
+    try {
+      const hash = location.hash.substring(1);
+      const str = decodeURIComponent(escape(atob(hash)));
+      const obj = JSON.parse(str);
+      doc = Object.assign(newDoc(), obj);
       if(!doc.blocks) doc.blocks = [];
+      history.replaceState(null, '', window.location.pathname); // clear hash
+      setTimeout(() => toast('Loaded from share link!', 'check'), 300);
+    } catch(e) { 
+      console.error("Failed to load share link", e);
     }
-  } catch(e) {}
+  } else {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if(raw) {
+        const o = JSON.parse(raw);
+        doc = Object.assign(newDoc(), o);
+        if(!doc.blocks) doc.blocks = [];
+      }
+    } catch(e) {}
+  }
+  
   history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
   renderAll();
+  renderDrafts();
 }
 boot();
 
