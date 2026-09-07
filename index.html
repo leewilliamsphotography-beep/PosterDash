@@ -9,7 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%231A1D21'/%3E%3Crect x='32' y='30' width='56' height='70' rx='8' fill='%23FFFFFF'/%3E%3Cpath d='M44 50 H76 M44 65 H68 M44 80 H76' stroke='%23D14C1E' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='88' cy='88' r='15' fill='%2300e0ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;600;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ---------- foundations ---------- */
 :root{
@@ -126,53 +126,22 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .block-btn svg{width:20px;height:20px;stroke:var(--ink2)}
 
 /* ---------- the sheet ---------- */
-.sheet{width:210mm;max-width:100%;min-height:297mm;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:16mm 15mm 10mm;display:flex;flex-direction:column;transition:width .3s, min-height .3s; position:relative;}
+.sheet{width:210mm;max-width:100%;min-height:297mm;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:16mm 15mm 10mm;display:flex;flex-direction:column;transition:width .3s, min-height .3s; position:relative; overflow: hidden;}
 .sheet.landscape{width:297mm;min-height:210mm}
-.sheet.f-atkinson .lbl,.sheet.f-atkinson .doc-sub{font-family:'Atkinson Hyperlegible',var(--f-doc)}
-.doc-title{font:800 38px/1.12 var(--f-ui);text-align:center;margin:0 0 8px;outline:none;white-space:pre-wrap;letter-spacing:-0.02em}
-.doc-sub{font:400 16.5px/1.45 var(--f-doc);text-align:center;color:var(--ink2);outline:none;margin:0 0 10px;white-space:pre-wrap}
+
 [contenteditable]:empty::before{content:attr(data-ph);color:#D1D5DB;pointer-events:none}
-[contenteditable]:focus{background:var(--accent-soft);border-radius:6px}
+[contenteditable]:focus{background:rgba(255,255,255,0.8);border-radius:6px}
 
-/* Themed Sheets - Rigidly applied via data-attribute */
-.sheet[data-theme="spring"] { background:#F0FFF4 !important; border-top:12px solid #10B981 !important; }
-.sheet[data-theme="spring"] .doc-title, .sheet[data-theme="spring"] .block[data-type="h1"] { color:#065F46 !important; } 
-.sheet[data-theme="spring"] .doc-sub, .sheet[data-theme="spring"] .block[data-type="h2"] { color:#047857 !important; } 
-.sheet[data-theme="spring"] .block[data-type="body"] { color:#065F46 !important; }
-.sheet[data-theme="spring"] .block[data-type="shape"] { background:#10B981 !important; }
-
-.sheet[data-theme="summer"] { background:#FFFDE7 !important; border-top:12px solid #F59E0B !important; }
-.sheet[data-theme="summer"] .doc-title, .sheet[data-theme="summer"] .block[data-type="h1"] { color:#92400E !important; } 
-.sheet[data-theme="summer"] .doc-sub, .sheet[data-theme="summer"] .block[data-type="h2"] { color:#B45309 !important; } 
-.sheet[data-theme="summer"] .block[data-type="body"] { color:#92400E !important; }
-.sheet[data-theme="summer"] .block[data-type="shape"] { background:#F59E0B !important; }
-
-.sheet[data-theme="autumn"] { background:#FFF3E0 !important; border-top:12px solid #D14C1E !important; }
-.sheet[data-theme="autumn"] .doc-title, .sheet[data-theme="autumn"] .block[data-type="h1"] { color:#7C2D12 !important; } 
-.sheet[data-theme="autumn"] .doc-sub, .sheet[data-theme="autumn"] .block[data-type="h2"] { color:#9A3412 !important; } 
-.sheet[data-theme="autumn"] .block[data-type="body"] { color:#7C2D12 !important; }
-.sheet[data-theme="autumn"] .block[data-type="shape"] { background:#D14C1E !important; }
-
-.sheet[data-theme="winter"] { background:#F0F9FF !important; border-top:12px solid #3B82F6 !important; }
-.sheet[data-theme="winter"] .doc-title, .sheet[data-theme="winter"] .block[data-type="h1"] { color:#1E3A8A !important; } 
-.sheet[data-theme="winter"] .doc-sub, .sheet[data-theme="winter"] .block[data-type="h2"] { color:#3730A3 !important; } 
-.sheet[data-theme="winter"] .block[data-type="body"] { color:#1E3A8A !important; }
-.sheet[data-theme="winter"] .block[data-type="shape"] { background:#3B82F6 !important; }
-
-.sheet[data-theme="medical"] { background:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
-.sheet[data-theme="medical"] .doc-title, .sheet[data-theme="medical"] .block[data-type="h1"] { color:#115E59 !important; } 
-.sheet[data-theme="medical"] .doc-sub, .sheet[data-theme="medical"] .block[data-type="h2"] { color:#0F766E !important; } 
-.sheet[data-theme="medical"] .block[data-type="body"] { color:#115E59 !important; }
-.sheet[data-theme="medical"] .block[data-type="shape"] { background:#14B8A6 !important; }
-
-.sheet[data-theme="cafe"] { background:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
-.sheet[data-theme="cafe"] .doc-title, .sheet[data-theme="cafe"] .block[data-type="h1"] { color:#4A3B2A !important; } 
-.sheet[data-theme="cafe"] .doc-sub, .sheet[data-theme="cafe"] .block[data-type="h2"] { color:#6B5A48 !important; } 
-.sheet[data-theme="cafe"] .block[data-type="body"] { color:#4A3B2A !important; }
-.sheet[data-theme="cafe"] .block[data-type="shape"] { background:#C4A484 !important; }
+/* Themed Sheets - Rigidly applied via data-attribute to blocks */
+.sheet[data-theme="spring"] { background-color:#F0FFF4 !important; border-top:12px solid #10B981 !important; }
+.sheet[data-theme="summer"] { background-color:#FFFDE7 !important; border-top:12px solid #F59E0B !important; }
+.sheet[data-theme="autumn"] { background-color:#FFF3E0 !important; border-top:12px solid #D14C1E !important; }
+.sheet[data-theme="winter"] { background-color:#F0F9FF !important; border-top:12px solid #3B82F6 !important; }
+.sheet[data-theme="medical"] { background-color:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
+.sheet[data-theme="cafe"] { background-color:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
 
 /* Block Styling */
-.lines{display:flex;flex-direction:column;flex:1;padding-top:14px; gap:16px;}
+.lines{display:flex;flex-direction:column;flex:1;padding-top:14px; gap:16px; position: relative; z-index: 2;}
 .block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
 .block:hover{border-color:rgba(0,0,0,0.15)}
 .block:focus-within{border-color:var(--accent); border-style: solid; border-width: 1px;} 
@@ -183,19 +152,20 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .block-tools button:hover{background:#eee}
 .block-tools svg{width:14px;height:14px;stroke:#555}
 
-.block[data-type="h1"]{font-size:42px;font-weight:800;line-height:1.1;letter-spacing:-0.02em;}
-.block[data-type="h2"]{font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-0.01em;}
-.block[data-type="body"]{font-size:16px;font-weight:400;line-height:1.6; color:#444;}
+.block[data-type="h1"]{font:800 38px/1.12 'Bricolage Grotesque','Lexend',sans-serif; letter-spacing:-0.02em;}
+.block[data-type="h2"]{font:700 24px/1.2 'Bricolage Grotesque','Lexend',sans-serif; letter-spacing:-0.01em;}
+.block[data-type="body"]{font:400 16px/1.6 'Lexend',sans-serif; color:#444;}
 .block[data-type="shape"]{height:12px; background:#000; border-radius:6px; margin: 10px 0; align-self: flex-start; width: 60px;}
-.block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:cover; background-position:center;}
+.block[data-type="panel"]{padding:24px; border-radius:12px; background:#f0f0f0; margin:10px 0; font:400 16px/1.6 'Lexend',sans-serif;}
+.block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:cover; background-position:center; border-radius:8px;}
 
-.empty{margin-top:14px;border:2px dashed var(--line);border-radius:12px;padding:48px 26px;text-align:center;break-inside:avoid;page-break-inside:avoid}
-.empty h3{font:800 22px var(--f-ui);margin:0 0 8px}
-.empty p{font:400 14px/1.6 var(--f-doc);color:var(--ink2);margin:0 0 18px}
+.empty{margin-top:14px;border:2px dashed var(--line);border-radius:12px;padding:48px 26px;text-align:center;break-inside:avoid;page-break-inside:avoid; z-index: 2;}
+.empty h3{font:800 22px 'Bricolage Grotesque','Lexend',sans-serif;margin:0 0 8px}
+.empty p{font:400 14px/1.6 'Lexend',sans-serif;color:var(--ink2);margin:0 0 18px}
 .empty .tpl{justify-content:center}
 
-.bottom-attr{display:flex;flex-direction:column;align-items:center;gap:15px;margin-top:40px;break-inside:avoid;page-break-inside:avoid}
-.attr{text-align:center;font:400 10.5px var(--f-doc);color:#B9B097;margin:0}
+.bottom-attr{display:flex;flex-direction:column;align-items:center;gap:15px;margin-top:40px;break-inside:avoid;page-break-inside:avoid; z-index: 2;}
+.attr{text-align:center;font:400 10.5px var(--f-doc);color:#B9B097;margin:0; background: rgba(255,255,255,0.8); padding: 5px 10px; border-radius: 8px;}
 
 #toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:80;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
 .toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:10px;font:600 13.5px var(--f-doc);box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);animation:tin .22s both;transition:opacity .3s,transform .3s}
@@ -223,7 +193,7 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
   .topbar{padding:10px 12px;justify-content:center;gap:8px;} .brand-name{font-size:17px;} .brand-sub{display:none;}
   .actions{width:100%;justify-content:center;flex-wrap:wrap;gap:8px;} .actions .btn span{display:none;} .actions .btn{padding:10px;}
   .actions .divider{display:none;} .actions .btn-group{gap:4px;}
-  .doc-title{font-size:26px;} .doc-sub{font-size:15px;} .sheet{padding:30px 20px;min-height:auto;} .sheet.landscape{width:100%;min-height:auto;}
+  .sheet{padding:30px 20px;min-height:auto;} .sheet.landscape{width:100%;min-height:auto;}
 }
 </style>
 </head>
@@ -274,6 +244,8 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         <select class="fmt-select" id="fontSel" title="Font Family">
           <option value="Lexend">Lexend</option>
           <option value="Atkinson Hyperlegible">Atkinson</option>
+          <option value="Poppins">Poppins</option>
+          <option value="Merriweather">Merriweather</option>
           <option value="Arial">Arial</option>
         </select>
         <select class="fmt-select" id="sizeSel" title="Font Size">
@@ -306,8 +278,9 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         <button class="block-btn" data-add="h1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M4 6h16M4 18h16"/></svg>Heading</button>
         <button class="block-btn" data-add="h2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h12M6 8h12M6 16h12"/></svg>Subhead</button>
         <button class="block-btn" data-add="body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>Text</button>
-        <button class="block-btn" data-add="shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Shape</button>
-        <button class="block-btn" data-add="image" style="grid-column: span 2;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image Upload</button>
+        <button class="block-btn" data-add="panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Panel</button>
+        <button class="block-btn" data-add="shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg>Shape</button>
+        <button class="block-btn" data-add="image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
       </div>
     </section>
 
@@ -317,13 +290,34 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
     </section>
 
     <section class="panel">
-      <h2 class="k"><b>03</b>Sheet Settings</h2>
+      <h2 class="k"><b>03</b>Background Designer</h2>
+      <div class="field">
+        <label for="bgColorPicker">Base Color</label>
+        <input type="color" id="bgColorPicker" value="#FFFFFF" style="width:100%; height:40px; border:1px solid var(--line); border-radius:8px; cursor:pointer; background:none;">
+      </div>
+      <div class="field">
+        <label for="patternSel">Pattern Style</label>
+        <select id="patternSel">
+          <option value="none">None</option>
+          <option value="dots">Dots</option>
+          <option value="grid">Grid</option>
+          <option value="diag">Diagonal Lines</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="patternColorPicker">Pattern Color</label>
+        <input type="color" id="patternColorPicker" value="#E3E5E8" style="width:100%; height:40px; border:1px solid var(--line); border-radius:8px; cursor:pointer; background:none;">
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>04</b>Sheet Settings</h2>
       <div class="field">
         <label for="sheetFormat">Sheet format</label>
         <select id="sheetFormat"><option value="portrait">A4 Portrait</option><option value="landscape">A4 Landscape</option></select>
       </div>
       <div class="field">
-        <label for="themeSel">Poster theme</label>
+        <label for="themeSel">Quick Themes</label>
         <select id="themeSel">
           <option value="default">Plain White</option>
           <option value="spring">Spring (Green)</option>
@@ -337,7 +331,7 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
     </section>
 
     <section class="panel">
-      <h2 class="k"><b>04</b>About</h2>
+      <h2 class="k"><b>05</b>About</h2>
       <p class="about">Everything runs in your browser — no account, no tracking, nothing uploaded. Your poster saves automatically on this device.</p>
       <p class="about">This whole tool is one HTML file: view source, fork it, host it anywhere.</p>
     </section>
@@ -345,10 +339,8 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
 
   <section class="stage">
     <div class="sheet portrait" id="sheet" data-theme="default">
-      <h1 class="doc-title" id="docTitle" contenteditable="true" data-ph="Poster title" spellcheck="true"></h1>
-      <div class="doc-sub" id="docSub" contenteditable="true" data-ph="Subtitle (optional)" spellcheck="true"></div>
       <div class="lines" id="lines"></div>
-      <div class="empty" id="empty">
+      <div class="empty" id="empty" hidden>
         <h3>Nothing on the sheet yet</h3>
         <p>Use the panel on the left to add text blocks, images, and shapes.<br>Or start from a quick template:</p>
         <div class="tpl" id="tplsEmpty"></div>
@@ -371,68 +363,80 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-const LS_KEY='posterd45h.doc.v1';
+const LS_KEY='posterd45h.doc.v3';
 const LS_DARK='posterd45h.dark';
 
 const TEMPLATES = {
-  event: { name:'Event Poster', theme:'winter', blocks:[
-    { type:'h1', text:'Coffee Morning', align:'center' },
-    { type:'h2', text:'Saturday, 10am – 12pm · St Mary’s Hall', align:'center' },
-    { type:'shape', align:'center' },
-    { type:'body', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome! Bring a friend.', align:'center' }
+  event: { name:'Event Poster', theme:'default', bgColor:'#1A1D21', pattern:'diag', patternColor:'#2d313c', blocks:[
+    { type:'h1', text:'SUMMER BASH', align:'left', style:{ color:'#FFFFFF', fontSize:'64px', fontFamily:'Poppins', marginBottom:'0' } },
+    { type:'panel', text:'SATURDAY 8PM · FREE ENTRY', align:'left', style:{ backgroundColor:'#D14C1E', color:'#FFFFFF', padding:'15px 25px', borderRadius:'0 12px 0 12px', fontSize:'20px', fontWeight:'bold', marginTop:'-20px', marginLeft:'40px', display:'inline-block' } },
+    { type:'body', text:'Join us for the biggest party of the year. Live DJ, drinks, and dancing until dawn.', align:'left', style:{ color:'#00e0ff', fontSize:'18px', marginTop:'30px' } },
+    { type:'shape', style:{ height:'4px', width:'100px', backgroundColor:'#D14C1E', borderRadius:'2px', marginTop:'20px' } }
   ]},
-  notice: { name:'Important Notice', theme:'autumn', blocks:[
-    { type:'h1', text:'Important Notice', align:'left' },
-    { type:'shape', align:'left' },
-    { type:'body', text:'Please be aware that the building will be closed on Monday for maintenance. We will reopen on Tuesday at 9:00 AM.', align:'left' }
+  notice: { name:'Important Notice', theme:'autumn', bgColor:'#FFF3E0', pattern:'dots', patternColor:'#FFEDD5', blocks:[
+    { type:'h1', text:'WARNING', align:'center', style:{ color:'#D14C1E', fontFamily:'Arial', fontSize:'56px', letterSpacing:'4px' } },
+    { type:'shape', style:{ height:'4px', width:'100%', backgroundColor:'#D14C1E', borderRadius:'2px' } },
+    { type:'panel', text:'The office will be closed on Monday for scheduled maintenance. We will reopen on Tuesday at 9:00 AM.', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #D14C1E', padding:'30px', borderRadius:'12px', fontSize:'20px', color:'#7C2D12', fontWeight:'bold' } }
   ]},
-  schedule: { name:'Daily Schedule', theme:'spring', blocks:[
-    { type:'h1', text:'My Daily Routine', align:'left' },
-    { type:'h2', text:'Morning', align:'left' },
-    { type:'body', text:'Wake up and eat breakfast. Brush my teeth. Go to school.', align:'left' },
-    { type:'h2', text:'Afternoon', align:'left' },
-    { type:'body', text:'Eat lunch. Play with friends. Art and music.', align:'left' }
+  schedule: { name:'Daily Schedule', theme:'winter', bgColor:'#F0F9FF', pattern:'grid', patternColor:'#DBEAFE', blocks:[
+    { type:'h1', text:'My Daily Routine', align:'left', style:{ color:'#1E3A8A', fontFamily:'Poppins' } },
+    { type:'panel', text:'08:00 - Registration & Breakfast', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'6px solid #3B82F6', padding:'15px', borderRadius:'0 8px 8px 0', fontSize:'20px', fontWeight:'bold', color:'#1E3A8A', boxShadow:'0 4px 6px rgba(0,0,0,0.05)' } },
+    { type:'panel', text:'10:00 - Morning Activities', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'6px solid #3B82F6', padding:'15px', borderRadius:'0 8px 8px 0', fontSize:'20px', fontWeight:'bold', color:'#1E3A8A', boxShadow:'0 4px 6px rgba(0,0,0,0.05)' } },
+    { type:'panel', text:'12:00 - Lunch Break', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'6px solid #3B82F6', padding:'15px', borderRadius:'0 8px 8px 0', fontSize:'20px', fontWeight:'bold', color:'#1E3A8A', boxShadow:'0 4px 6px rgba(0,0,0,0.05)' } }
   ]},
-  menu: { name:'Cafe Menu', theme:'cafe', blocks:[
-    { type:'h1', text:'Today’s Menu', align:'center' },
-    { type:'shape', align:'center' },
-    { type:'h2', text:'Starters', align:'center' },
-    { type:'body', text:'Soup of the day. Garlic bread.', align:'center' },
-    { type:'h2', text:'Mains', align:'center' },
-    { type:'body', text:'Sandwiches and salad. Cake and tea.', align:'center' }
+  menu: { name:'Cafe Menu', theme:'cafe', bgColor:'#FBF7F0', pattern:'none', patternColor:'#EAE0D5', blocks:[
+    { type:'h1', text:'Today’s Menu', align:'center', style:{ color:'#4A3B2A', fontFamily:'Merriweather', fontStyle:'italic' } },
+    { type:'shape', style:{ height:'0px', width:'100%', borderTop:'2px dotted #C4A484', backgroundColor:'transparent' } },
+    { type:'h2', text:'Starters', align:'center', style:{ color:'#6B5A48', fontFamily:'Merriweather' } },
+    { type:'body', text:'Tomato Basil Soup · Garlic Bread', align:'center', style:{ color:'#4A3B2A' } },
+    { type:'shape', style:{ height:'0px', width:'100%', borderTop:'2px dotted #C4A484', backgroundColor:'transparent', marginTop:'20px' } },
+    { type:'h2', text:'Mains', align:'center', style:{ color:'#6B5A48', fontFamily:'Merriweather' } },
+    { type:'body', text:'Roast Chicken · Veggie Lasagna', align:'center', style:{ color:'#4A3B2A' } }
   ]},
-  social: { name:'Social Story', theme:'medical', blocks:[
-    { type:'h1', text:'Going to the Doctor', align:'left' },
-    { type:'shape', align:'left' },
-    { type:'body', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair.', align:'left' },
-    { type:'body', text:'The doctor looks at my teeth. I am brave. I get a sticker.', align:'left' }
+  social: { name:'Social Story', theme:'medical', bgColor:'#F0FDFA', pattern:'dots', patternColor:'#CCFBF1', blocks:[
+    { type:'panel', text:'Going to the Doctor', align:'left', style:{ backgroundColor:'#14B8A6', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
+    { type:'panel', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair. The doctor looks at my teeth. I am brave. I get a sticker.', align:'left', style:{ backgroundColor:'#FFFFFF', color:'#115E59', padding:'25px', borderRadius:'0 0 12px 12px', fontSize:'18px', border:'2px solid #14B8A6', borderTop:'none' } }
   ]},
-  nowNext: { name:'Now & Next Board', theme:'summer', blocks:[
-    { type:'h1', text:'Now and Next', align:'center' },
-    { type:'h2', text:'NOW:', align:'left' },
-    { type:'body', text:'Tidy up the toys.', align:'left' },
-    { type:'h2', text:'NEXT:', align:'left' },
-    { type:'body', text:'Choose a game to play.', align:'left' }
+  nowNext: { name:'Now & Next Board', theme:'summer', bgColor:'#FFFDE7', pattern:'diag', patternColor:'#FEF3C7', blocks:[
+    { type:'panel', text:'NOW', align:'center', style:{ backgroundColor:'#F59E0B', color:'#FFFFFF', padding:'15px', borderRadius:'12px 12px 0 0', fontSize:'32px', fontWeight:'bold', fontFamily:'Poppins' } },
+    { type:'panel', text:'Tidy up the toys.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#92400E', padding:'30px', borderRadius:'0 0 12px 12px', fontSize:'24px', border:'3px solid #F59E0B', borderTop:'none' } },
+    { type:'panel', text:'NEXT', align:'center', style:{ backgroundColor:'#10B981', color:'#FFFFFF', padding:'15px', borderRadius:'12px 12px 0 0', fontSize:'32px', fontWeight:'bold', fontFamily:'Poppins', marginTop:'20px' } },
+    { type:'panel', text:'Choose a game to play.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#065F46', padding:'30px', borderRadius:'0 0 12px 12px', fontSize:'24px', border:'3px solid #10B981', borderTop:'none' } }
   ]},
-  welcome: { name:'Welcome Poster', theme:'spring', blocks:[
-    { type:'h1', text:'Welcome to Class 2!', align:'center' },
-    { type:'shape', align:'center' },
-    { type:'body', text:'We are so happy to have you here. Please hang your coat on your peg and put your book bag in the box.', align:'center' }
+  welcome: { name:'Welcome Poster', theme:'spring', bgColor:'#F0FFF4', pattern:'none', patternColor:'#D1FAE5', blocks:[
+    { type:'shape', style:{ height:'50px', width:'50px', backgroundColor:'#10B981', borderRadius:'50%', margin:'0 auto' } },
+    { type:'h1', text:'WELCOME', align:'center', style:{ color:'#065F46', fontFamily:'Poppins', fontSize:'72px', marginTop:'10px' } },
+    { type:'h2', text:'to our community space', align:'center', style:{ color:'#10B981', fontFamily:'Merriweather', fontStyle:'italic' } },
+    { type:'body', text:'Please feel free to look around, take a seat, and enjoy a cup of tea.', align:'center', style:{ color:'#065F46', marginTop:'20px' } }
   ]},
-  rules: { name:'Classroom Rules', theme:'autumn', blocks:[
-    { type:'h1', text:'Our Classroom Rules', align:'left' },
-    { type:'shape', align:'left' },
-    { type:'body', text:'1. We listen to each other.\n2. We put our hands up to speak.\n3. We are kind and helpful.\n4. We look after our toys.', align:'left' }
+  rules: { name:'Classroom Rules', theme:'default', bgColor:'#FFFFFF', pattern:'grid', patternColor:'#F0F1F3', blocks:[
+    { type:'h1', text:'CLASSROOM RULES', align:'left', style:{ color:'#1A1D21', fontFamily:'Arial', fontSize:'42px', borderBottom:'4px solid #1A1D21', paddingBottom:'10px' } },
+    { type:'panel', text:'1. We listen to each other.\n2. We put our hands up to speak.\n3. We are kind and helpful.\n4. We look after our toys.', align:'left', style:{ backgroundColor:'#F8F9FA', borderLeft:'8px solid #D14C1E', padding:'25px', fontSize:'22px', lineHeight:'1.8', color:'#1A1D21', fontFamily:'Lexend' } }
   ]}
 };
 
 let uidSeq=1;
 const uid=()=>'b'+(uidSeq++)+Date.now().toString(36);
-function newDoc(){return{title:'',subtitle:'',format:'portrait',theme:'default',blocks:[]}}
+
+function newDoc(){
+  return {
+    format:'portrait',
+    theme:'default',
+    bgColor:'#FFFFFF',
+    pattern:'none',
+    patternColor:'#E3E5E8',
+    blocks:[
+      { uid: uid(), type: 'h1', text: 'Main Headline', align: 'center' },
+      { uid: uid(), type: 'h2', text: 'Sub Heading', align: 'center' },
+      { uid: uid(), type: 'body', text: 'Click to edit text. You can type anything here. Make it long, make it short, make it punchy.', align: 'center' }
+    ]
+  };
+}
 let doc=newDoc();
 
-const sheet=$('#sheet'), linesEl=$('#lines'), titleEl=$('#docTitle'), subEl=$('#docSub'), imageUpload=$('#imageUpload'), applyAllChk=$('#applyAllChk');
+const sheet=$('#sheet'), linesEl=$('#lines'), imageUpload=$('#imageUpload'), applyAllChk=$('#applyAllChk');
 
 let history = [];
 let hIndex = -1;
@@ -453,14 +457,33 @@ function updateUndoRedoBtns() {
 let saveT=null;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){}},350);}
 
+function applyBackground() {
+  sheet.style.backgroundColor = doc.bgColor || '#FFFFFF';
+  if (doc.pattern === 'dots') {
+    sheet.style.backgroundImage = `radial-gradient(${doc.patternColor} 2px, transparent 2px)`;
+    sheet.style.backgroundSize = '24px 24px';
+  } else if (doc.pattern === 'grid') {
+    sheet.style.backgroundImage = `linear-gradient(${doc.patternColor} 1px, transparent 1px), linear-gradient(90deg, ${doc.patternColor} 1px, transparent 1px)`;
+    sheet.style.backgroundSize = '24px 24px';
+  } else if (doc.pattern === 'diag') {
+    sheet.style.backgroundImage = `repeating-linear-gradient(45deg, ${doc.patternColor} 0, ${doc.patternColor} 1px, transparent 1px, transparent 12px)`;
+  } else {
+    sheet.style.backgroundImage = 'none';
+  }
+}
+
 function renderAll(){
-  titleEl.textContent=doc.title||'';
-  subEl.textContent=doc.subtitle||'';
   sheet.classList.toggle('landscape', doc.format === 'landscape');
   sheet.classList.toggle('portrait', doc.format === 'portrait');
   sheet.setAttribute('data-theme', doc.theme);
+  applyBackground();
+  
   $('#sheetFormat').value=doc.format;
   $('#themeSel').value=doc.theme;
+  $('#bgColorPicker').value=doc.bgColor || '#FFFFFF';
+  $('#patternSel').value=doc.pattern || 'none';
+  $('#patternColorPicker').value=doc.patternColor || '#E3E5E8';
+  
   renderBlocks();
 }
 
@@ -471,18 +494,27 @@ function renderBlocks(){
 }
 
 function blockHTML(b){
+  let styleStr = '';
+  if (b.style) {
+    styleStr = Object.entries(b.style).map(([k, v]) => `${toKebab(k)}:${v}`).join(';');
+  }
   const alignStyle = b.align ? `text-align:${b.align};` : '';
-  let content = '';
+  const fullStyle = `style="${alignStyle}${styleStr}"`;
+  const ph = b.type === 'h1' ? 'Heading' : (b.type === 'h2' ? 'Subhead' : (b.type === 'panel' ? 'Panel Text' : 'Text'));
+  
   if(b.type === 'shape'){
-    content = `<div class="block" data-type="shape" data-uid="${b.uid}" style="${alignStyle}"></div>`;
+    return `<div class="block" data-type="shape" data-uid="${b.uid}" ${fullStyle}></div>` + getToolsHTML(b.uid);
   } else if(b.type === 'image'){
     const imgSrc = b.imgSrc ? `background-image:url('${b.imgSrc}');` : '';
-    content = `<div class="block" data-type="image" data-uid="${b.uid}" style="${imgSrc}"></div>`;
+    return `<div class="block" data-type="image" data-uid="${b.uid}" style="${imgSrc}${styleStr}"></div>` + getToolsHTML(b.uid);
   } else {
-    content = `<div class="block" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" style="${alignStyle}">${esc(b.text || '')}</div>`;
+    return `<div class="block" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" data-ph="${ph}" ${fullStyle}>${esc(b.text || '')}</div>` + getToolsHTML(b.uid);
   }
-  return content + `
-    <div class="block-tools" data-uid="${b.uid}">
+}
+
+function getToolsHTML(uidVal) {
+  return `
+    <div class="block-tools" data-uid="${uidVal}">
       <button data-act="up" title="Move Up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
       <button data-act="down" title="Move Down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
       <button data-act="del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
@@ -523,6 +555,7 @@ document.querySelectorAll('[data-add]').forEach(btn => {
       return;
     }
     const newBlock = { uid: uid(), type: type, text: type === 'h1' ? 'Main Headline' : (type === 'h2' ? 'Sub Heading' : 'Enter text here...') };
+    if(type === 'panel') newBlock.text = 'Enter text here...';
     doc.blocks.push(newBlock);
     pushHistory(); renderBlocks(); save();
   };
@@ -551,7 +584,10 @@ document.addEventListener('click', e => {
   if(!b) return;
   const tpl = TEMPLATES[b.dataset.tpl];
   doc.theme = tpl.theme;
-  doc.blocks = tpl.blocks.map(b => ({ ...b, uid: uid() }));
+  doc.bgColor = tpl.bgColor;
+  doc.pattern = tpl.pattern;
+  doc.patternColor = tpl.patternColor;
+  doc.blocks = tpl.blocks.map(bl => ({ ...bl, uid: uid() }));
   pushHistory(); renderAll(); save();
   toast('Template loaded!');
 });
@@ -607,26 +643,23 @@ document.querySelectorAll('.fmt-btn[data-cmd]').forEach(btn => {
 
 // Settings Listeners
  $('#sheetFormat').onchange = (e) => { doc.format = e.target.value; pushHistory(); renderAll(); save(); };
- $('#themeSel').onchange = (e) => { doc.theme = e.target.value; pushHistory(); renderAll(); save(); };
+
+ $('#themeSel').onchange = (e) => { 
+  doc.theme = e.target.value; 
+  // Reset custom bg to let theme take over, or keep custom? Let's keep custom if user set it, but theme change implies a full visual reset.
+  doc.bgColor = '#FFFFFF'; 
+  doc.pattern = 'none'; 
+  pushHistory(); renderAll(); save(); 
+};
+
+ $('#bgColorPicker').addEventListener('input', (e) => { doc.bgColor = e.target.value; applyBackground(); save(); });
+ $('#patternSel').onchange = (e) => { doc.pattern = e.target.value; applyBackground(); pushHistory(); save(); };
+ $('#patternColorPicker').addEventListener('input', (e) => { doc.patternColor = e.target.value; applyBackground(); save(); });
+
  $('#undoBtn').onclick = undo;
  $('#redoBtn').onclick = redo;
 
-// Title / Subtitle / Block Text Edits
-function ce(el, key, isBlock, uidVal){
-  el.addEventListener('input', () => {
-    if(isBlock) {
-      const block = doc.blocks.find(b => b.uid === uidVal);
-      if(block) block.text = el.textContent;
-    } else {
-      doc[key] = el.textContent;
-    }
-    save();
-  });
-  el.addEventListener('blur', () => pushHistory());
-}
-ce(titleEl, 'title', false);
-ce(subEl, 'subtitle', false);
-
+// Block Text Edits
 linesEl.addEventListener('focusin', (e) => {
   const block = e.target.closest('.block[contenteditable]');
   if(block) {
