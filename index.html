@@ -40,7 +40,9 @@ input,select{font-family:inherit}
 /* ---------- layout ---------- */
 .app{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - var(--tb))}
 .rail{border-right:1px solid var(--line);padding:24px;overflow-y:auto;background:var(--surface)}
-.stage{display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:auto;padding:48px; background-color: var(--bg); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px;}
+
+/* Fixed scrolling issue: using flex-start to prevent top cutoff */
+.stage{display:flex; flex-direction: row; justify-content:center; align-items:flex-start; overflow:auto; padding:48px; background-color: var(--bg); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px;}
 
 /* ---------- text format toolbar ---------- */
 .format-bar{display:flex;gap:4px;flex-wrap:wrap;background:var(--surface2);padding:8px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;align-items:center}
@@ -68,13 +70,11 @@ input,select{font-family:inherit}
 .color-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--text-dim);flex:none}
 
 /* ---------- canvas / sheet ---------- */
-.sheet-container{transform-origin:top center}
-.sheet{width:600px;min-height:800px;background:#fff;color:#000;padding:48px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 50px rgba(0,0,0,0.5);transition:background .3s, color .3s; position:relative; overflow:hidden;}
+.sheet{width:210mm; min-height:297mm; background:#fff; color:#000; padding:20mm; display:flex; flex-direction:column; gap:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5); transition:background .3s, color .3s; position:relative; overflow:hidden;}
 
 /* Block Styling */
 .block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
 .block:hover{border-color:rgba(0,0,0,0.15)}
-/* Removed background from focus-within to prevent theme overwrite */
 .block:focus-within{border-color:var(--accent); border-style: solid; border-width: 1px;} 
 .block.tools-visible .block-tools{opacity:1; pointer-events:auto}
 
@@ -132,12 +132,11 @@ input,select{font-family:inherit}
 
 @media print {
   @page { size: A4; margin: 0; }
-  body { background: #fff; }
-  .topbar, .rail, .app { display: block; height: auto; overflow: visible; }
-  .app { display: block; }
-  .rail { display: none; }
-  .stage { padding: 0; background: none; overflow: visible; }
-  .sheet { width: 210mm; min-height: 297mm; box-shadow: none; margin: 0; }
+  body { background: #fff; overflow: visible; }
+  .topbar, .rail { display: none !important; }
+  .app { display: block; height: auto; }
+  .stage { padding: 0; background: none; overflow: visible; display: block; }
+  .sheet { width: 210mm; min-height: 297mm; box-shadow: none; margin: 0; max-width: 100%; }
   .block-tools { display: none !important; }
 }
 </style>
@@ -275,30 +274,46 @@ input,select{font-family:inherit}
     body: "Click to edit text. You can type anything here. Make it long, make it short, make it punchy."
   };
 
-  // Preset Templates
+  // Preset Templates with Professional Themes and Alignments
   const TEMPLATES = {
-    event: [
-      { type: 'h1', text: 'Coffee Morning' },
-      { type: 'h2', text: 'Saturday, 10am – 12pm · St Mary’s Hall' },
-      { type: 'shape' },
-      { type: 'body', text: 'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome! Bring a friend.' }
-    ],
-    notice: [
-      { type: 'h1', text: 'Important Notice' },
-      { type: 'body', text: 'Please be aware that the building will be closed on Monday for maintenance. We will reopen on Tuesday at 9:00 AM.' }
-    ],
-    schedule: [
-      { type: 'h1', text: 'My Daily Routine' },
-      { type: 'h2', text: 'Morning' },
-      { type: 'body', text: 'Wake up and eat breakfast. Brush my teeth. Go to school.' },
-      { type: 'h2', text: 'Afternoon' },
-      { type: 'body', text: 'Eat lunch. Play with friends. Art and music.' }
-    ],
-    menu: [
-      { type: 'h1', text: 'Today’s Menu' },
-      { type: 'shape' },
-      { type: 'body', text: 'Soup of the day. Sandwiches and salad. Cake and tea.' }
-    ]
+    event: {
+      theme: 'winter', // Professional Blue
+      blocks: [
+        { type: 'h1', text: 'Coffee Morning', align: 'center' },
+        { type: 'h2', text: 'Saturday, 10am – 12pm · St Mary’s Hall', align: 'center' },
+        { type: 'shape', align: 'center' },
+        { type: 'body', text: 'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome! Bring a friend.', align: 'center' }
+      ]
+    },
+    notice: {
+      theme: 'autumn', // Attention-grabbing but professional Orange
+      blocks: [
+        { type: 'h1', text: 'Important Notice', align: 'left' },
+        { type: 'shape', align: 'left' },
+        { type: 'body', text: 'Please be aware that the building will be closed on Monday for maintenance. We will reopen on Tuesday at 9:00 AM.', align: 'left' }
+      ]
+    },
+    schedule: {
+      theme: 'spring', // Structured Green
+      blocks: [
+        { type: 'h1', text: 'My Daily Routine', align: 'left' },
+        { type: 'h2', text: 'Morning', align: 'left' },
+        { type: 'body', text: 'Wake up and eat breakfast. Brush my teeth. Go to school.', align: 'left' },
+        { type: 'h2', text: 'Afternoon', align: 'left' },
+        { type: 'body', text: 'Eat lunch. Play with friends. Art and music.', align: 'left' }
+      ]
+    },
+    menu: {
+      theme: 'cafe', // Warm Cream
+      blocks: [
+        { type: 'h1', text: 'Today’s Menu', align: 'center' },
+        { type: 'shape', align: 'center' },
+        { type: 'h2', text: 'Starters', align: 'center' },
+        { type: 'body', text: 'Soup of the day. Garlic bread.', align: 'center' },
+        { type: 'h2', text: 'Mains', align: 'center' },
+        { type: 'body', text: 'Sandwiches and salad. Cake and tea.', align: 'center' }
+      ]
+    }
   };
 
   function init() {
@@ -384,15 +399,30 @@ input,select{font-family:inherit}
   // Apply Templates
   document.querySelectorAll('[data-tpl]').forEach(btn => {
     btn.onclick = () => {
-      const tpl = TEMPLATES[btn.dataset.tpl];
+      const tplKey = btn.dataset.tpl;
+      const tpl = TEMPLATES[tplKey];
+      
+      // Apply theme associated with template
+      sheet.className = sheet.className.replace(/\btheme-\S+/g, '').trim();
+      if(tpl.theme !== 'default') sheet.classList.add('theme-' + tpl.theme);
+      
+      // Update theme button active states in sidebar
+      document.querySelectorAll('.theme-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.theme === tpl.theme);
+      });
+
+      // Build blocks
       sheet.innerHTML = '';
-      tpl.forEach(item => {
+      tpl.blocks.forEach(item => {
         const block = document.createElement('div');
         block.className = 'block';
         block.dataset.type = item.type;
         if(item.type !== 'shape') {
           block.setAttribute('contenteditable', 'true');
           block.textContent = item.text;
+        }
+        if(item.align) {
+          block.style.textAlign = item.align;
         }
         sheet.appendChild(block);
       });
