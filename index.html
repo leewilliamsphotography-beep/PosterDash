@@ -2,82 +2,177 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="PosterD45h — a free, open tool for making rapid, accessible posters and materials.">
+<meta name="theme-color" content="#F2F6FB">
 <title>PosterD45h — Rapid Poster Designer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%231A1D21'/%3E%3Crect x='32' y='30' width='56' height='70' rx='8' fill='%23FFFFFF'/%3E%3Cpath d='M44 50 H76 M44 65 H68 M44 80 H76' stroke='%23D14C1E' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='88' cy='88' r='15' fill='%2300e0ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;600;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ---------- foundations ---------- */
 :root{
-  --bg:#0f1115; --surface:#1a1d24; --surface2:#22262f; --line:#2d313c;
-  --text:#ffffff; --text-dim:#8b919e; --accent:#ff4d4d; --accent2:#00e0ff;
-  --tb:56px;
-  --f-ui:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --paper:#F8F9FA;
+  --surface:#FFFFFF;
+  --ink:#1A1D21;
+  --ink2:#50545C;
+  --line:#E3E5E8;
+  --line2:#F0F1F3;
+  --accent:#D14C1E;
+  --accent-d:#B23E17;
+  --accent-soft:rgba(209,76,30,.1);
+  --focus:#2563EB;
+  --tb:61px;
+  --f-ui:'Bricolage Grotesque','Lexend',sans-serif;
+  --f-doc:'Lexend',sans-serif;
+}
+
+body.dark-mode{
+  --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0;
+  --line:#333333; --line2:#262626; --accent-soft:rgba(209,76,30,.25);
 }
 
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:var(--f-ui);-webkit-font-smoothing:antialiased}
-button{font-family:inherit;color:inherit;cursor:pointer}
-input,select{font-family:inherit}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-doc);-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .2s,color .2s}
+button,input,select{font-family:inherit;color:inherit}
+a{color:var(--accent)}
+::selection{background:rgba(37,99,235,.2)}
+
+:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+button:focus-visible, .btn:focus-visible{outline-offset:1px}
+.skip-link{position:absolute;top:-50px;left:0;background:var(--focus);color:#fff;padding:12px 20px;z-index:1000;border-radius:0 0 8px 0;font-weight:700;text-decoration:none}
+.skip-link:focus{top:0}
 
 /* ---------- top bar ---------- */
-.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 24px;height:var(--tb);background:var(--surface);border-bottom:1px solid var(--line)}
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:11px 24px;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,0.02)}
 .brand{display:flex;align-items:center;gap:12px}
-.brand-logo{width:36px;height:36px}
-.brand-name{font:800 18px var(--f-ui);letter-spacing:-0.02em}
-.brand-name span{color:var(--accent)}
-.actions{display:flex;align-items:center;gap:8px}
+.mark{width:38px;height:38px;flex:none}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font:800 19px var(--f-ui);letter-spacing:-0.02em}
+.brand-sub{font:600 10px var(--f-doc);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.btn-group{display:flex;align-items:center;gap:6px}
+.divider{width:1px;height:28px;background:var(--line)}
 
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 13px var(--f-ui);padding:8px 14px;border-radius:6px;border:1px solid transparent;background:transparent;transition:all .15s}
-.btn:hover{background:var(--surface2)}
-.btn.accent{background:var(--accent);color:#fff}
-.btn.accent:hover{background:#ff3333}
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 13.5px var(--f-ui);padding:8px 14px;border-radius:8px;border:1px solid transparent;background:transparent;cursor:pointer;color:var(--ink);transition:background .15s,color .15s,border-color .15s, opacity .15s}
+.btn svg{width:16px;height:16px}
+.btn:hover{background:var(--line2)}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.accent:hover{background:var(--accent-d);border-color:var(--accent-d)}
 .btn.ghost{border-color:var(--line);background:var(--surface)}
-.btn.ghost:hover{background:var(--surface2);border-color:var(--text-dim)}
-
-/* ---------- layout ---------- */
-.app{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - var(--tb))}
-.rail{border-right:1px solid var(--line);padding:24px;overflow-y:auto;background:var(--surface)}
-
-/* Fixed scrolling issue */
-.stage{display:flex; flex-direction: row; justify-content:center; align-items:flex-start; overflow:auto; padding:48px; background-color: var(--bg); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px;}
+.btn.ghost:hover{background:var(--line2);border-color:var(--ink2)}
+.btn.big{width:100%;padding:14px;font-size:15px;background:var(--ink);color:var(--surface);border-radius:10px}
+.btn.big:hover{background:var(--accent)}
+.btn.big kbd{font:600 11px var(--f-doc);border:1px solid rgba(255,255,255,.2);border-radius:5px;padding:1px 7px;margin-left:4px}
+.btn.danger{color:var(--accent);border-color:transparent;background:var(--accent-soft)}
+.btn.danger:hover{background:var(--accent);color:#fff}
+.btn.small{font-size:13px;padding:8px 12px}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.btn:disabled:hover{background:transparent;border-color:var(--line)}
+.ibtn{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;border:1px solid transparent;background:transparent;cursor:pointer;color:var(--ink2);transition:background .15s,color .15s}
+.ibtn:hover{background:var(--line2);color:var(--ink)}
+.ibtn.danger:hover{color:var(--accent);background:var(--accent-soft)}
+.ibtn svg{width:16px;height:16px}
 
 /* ---------- text format toolbar ---------- */
-.format-bar{display:flex;gap:4px;flex-wrap:wrap;background:var(--surface2);padding:8px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;align-items:center}
-.fmt-btn{width:32px;height:32px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:4px;font-weight:bold;color:var(--text-dim);font-size:14px}
-.fmt-btn:hover{background:var(--bg);color:var(--text)}
-.fmt-btn svg{width:16px;height:16px;stroke:var(--text-dim)}
-.fmt-btn:hover svg{stroke:var(--text)}
-.fmt-select{background:var(--bg);border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:4px;font-size:13px;}
+.format-bar{display:flex;gap:4px;flex-wrap:wrap;background:var(--paper);padding:8px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;align-items:center}
+.fmt-btn{width:32px;height:32px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:4px;font-weight:bold;color:var(--ink);font-size:14px;cursor:pointer}
+.fmt-btn:hover{background:var(--line2);color:var(--accent)}
+.fmt-btn svg{width:16px;height:16px;stroke:var(--ink)}
+.fmt-btn:hover svg{stroke:var(--accent)}
+.fmt-select{background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:6px 8px;border-radius:4px;font-size:13px;cursor:pointer}
 .fmt-color{width:32px;height:32px;padding:0;border:1px solid var(--line);background:transparent;cursor:pointer;}
-.apply-all-wrapper{display:flex;align-items:center;gap:6px;margin-bottom:12px;padding:8px;background:var(--bg);border:1px solid var(--line);border-radius:6px}
+.apply-all-wrapper{display:flex;align-items:center;gap:6px;margin-bottom:12px;padding:8px;background:var(--paper);border:1px solid var(--line);border-radius:6px}
 .apply-all-wrapper input{cursor:pointer}
-.apply-all-wrapper label{font-size:12px;color:var(--text);cursor:pointer;font-weight:600}
+.apply-all-wrapper label{font-size:12px;color:var(--ink);cursor:pointer;font-weight:600}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:340px minmax(0,1fr);align-items:start}
+.rail{border-right:1px solid var(--line);padding:28px 24px 48px;position:sticky;top:var(--tb);height:calc(100vh - var(--tb));overflow-y:auto;background:var(--surface)}
+.stage{padding:48px 48px 96px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - var(--tb));background-color: #FDFDFD; background-image: linear-gradient(#EEEFEF 1px, transparent 1px), linear-gradient(90deg, #EEEFEF 1px, transparent 1px); background-size: 32px 32px;}
+body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px); background-size: 32px 32px;}
 
 /* ---------- rail panels ---------- */
 .panel{margin-bottom:32px}
-.panel-title{font:700 11px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.panel-title::after{content:"";flex:1;height:1px;background:var(--line)}
+.k{display:flex;align-items:center;gap:10px;margin:0 0 16px;font:700 11px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.k b{font:800 11px var(--f-ui);color:var(--accent);letter-spacing:0;background:var(--accent-soft);padding:3px 6px;border-radius:4px}
+.k::after{content:"";flex:1;height:1px;background:var(--line)}
 
+.hint{margin:12px 2px 0;font:400 13px/1.55 var(--f-doc);color:var(--ink2)}
+.hint b{font-weight:600;color:var(--ink)}
+.about{font:400 13px/1.6 var(--f-doc);color:var(--ink2);margin:0 0 12px}
+
+/* templates / fields / toggles */
+.tpl{display:flex;flex-wrap:wrap;gap:8px}
+.tpl button{font:600 13px var(--f-ui);padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);transition:all .15s}
+.tpl button:hover{border-color:var(--ink);box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.field{margin:18px 0 0}
+.field>label{display:block;font:700 11px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
+.field select, .field input[type="text"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:400 14px var(--f-doc);cursor:pointer;outline:none;color:var(--ink)}
+.field select:focus, .field input[type="text"]:focus{border-color:var(--ink)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
+.seg button{flex:1;padding:9px 0;font:600 13px var(--f-ui);background:transparent;border:0;cursor:pointer;color:var(--ink2);transition:background .15s,color .15s}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--ink);color:var(--surface)}
+
+/* Block Grid */
 .block-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.block-btn{padding:12px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;font:600 12px var(--f-ui);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-dim);transition:all .15s}
-.block-btn:hover{color:var(--text);border-color:var(--accent);transform:translateY(-2px)}
-.block-btn svg{width:20px;height:20px;stroke:var(--accent2)}
+.block-btn{padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font:600 12px var(--f-ui);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink2);transition:all .15s}
+.block-btn:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+.block-btn svg{width:20px;height:20px;stroke:var(--ink2)}
 
-.tpl-list, .theme-list, .orient-list{display:flex;flex-direction:column;gap:8px}
-.tpl-btn, .theme-btn, .orient-btn{text-align:left;padding:12px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;color:var(--text);font:600 13px var(--f-ui);display:flex;align-items:center;gap:10px;transition:all .15s}
-.tpl-btn:hover, .theme-btn:hover, .orient-btn:hover{border-color:var(--accent2)}
-.theme-btn.active, .orient-btn.active{border-color:var(--accent);background:rgba(255,77,77,0.1)}
-.color-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--text-dim);flex:none}
+/* ---------- the sheet ---------- */
+.sheet{width:210mm;max-width:100%;min-height:297mm;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:16mm 15mm 10mm;display:flex;flex-direction:column;transition:width .3s, min-height .3s; position:relative;}
+.sheet.landscape{width:297mm;min-height:210mm}
+.sheet.f-atkinson .lbl,.sheet.f-atkinson .doc-sub{font-family:'Atkinson Hyperlegible',var(--f-doc)}
+.doc-title{font:800 38px/1.12 var(--f-ui);text-align:center;margin:0 0 8px;outline:none;white-space:pre-wrap;letter-spacing:-0.02em}
+.doc-sub{font:400 16.5px/1.45 var(--f-doc);text-align:center;color:var(--ink2);outline:none;margin:0 0 10px;white-space:pre-wrap}
+[contenteditable]:empty::before{content:attr(data-ph);color:#D1D5DB;pointer-events:none}
+[contenteditable]:focus{background:var(--accent-soft);border-radius:6px}
 
-/* ---------- canvas / sheet ---------- */
-.sheet{background:#fff; color:#000; padding:20mm; display:flex; flex-direction:column; gap:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5); transition:width .3s, min-height .3s, background .3s, color .3s; position:relative; overflow:hidden;}
-.sheet.portrait { width:210mm; min-height:297mm; }
-.sheet.landscape { width:297mm; min-height:210mm; }
+/* Themed Sheets - Rigidly applied via data-attribute */
+.sheet[data-theme="spring"] { background:#F0FFF4 !important; border-top:12px solid #10B981 !important; }
+.sheet[data-theme="spring"] .doc-title, .sheet[data-theme="spring"] .block[data-type="h1"] { color:#065F46 !important; } 
+.sheet[data-theme="spring"] .doc-sub, .sheet[data-theme="spring"] .block[data-type="h2"] { color:#047857 !important; } 
+.sheet[data-theme="spring"] .block[data-type="body"] { color:#065F46 !important; }
+.sheet[data-theme="spring"] .block[data-type="shape"] { background:#10B981 !important; }
+
+.sheet[data-theme="summer"] { background:#FFFDE7 !important; border-top:12px solid #F59E0B !important; }
+.sheet[data-theme="summer"] .doc-title, .sheet[data-theme="summer"] .block[data-type="h1"] { color:#92400E !important; } 
+.sheet[data-theme="summer"] .doc-sub, .sheet[data-theme="summer"] .block[data-type="h2"] { color:#B45309 !important; } 
+.sheet[data-theme="summer"] .block[data-type="body"] { color:#92400E !important; }
+.sheet[data-theme="summer"] .block[data-type="shape"] { background:#F59E0B !important; }
+
+.sheet[data-theme="autumn"] { background:#FFF3E0 !important; border-top:12px solid #D14C1E !important; }
+.sheet[data-theme="autumn"] .doc-title, .sheet[data-theme="autumn"] .block[data-type="h1"] { color:#7C2D12 !important; } 
+.sheet[data-theme="autumn"] .doc-sub, .sheet[data-theme="autumn"] .block[data-type="h2"] { color:#9A3412 !important; } 
+.sheet[data-theme="autumn"] .block[data-type="body"] { color:#7C2D12 !important; }
+.sheet[data-theme="autumn"] .block[data-type="shape"] { background:#D14C1E !important; }
+
+.sheet[data-theme="winter"] { background:#F0F9FF !important; border-top:12px solid #3B82F6 !important; }
+.sheet[data-theme="winter"] .doc-title, .sheet[data-theme="winter"] .block[data-type="h1"] { color:#1E3A8A !important; } 
+.sheet[data-theme="winter"] .doc-sub, .sheet[data-theme="winter"] .block[data-type="h2"] { color:#3730A3 !important; } 
+.sheet[data-theme="winter"] .block[data-type="body"] { color:#1E3A8A !important; }
+.sheet[data-theme="winter"] .block[data-type="shape"] { background:#3B82F6 !important; }
+
+.sheet[data-theme="medical"] { background:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
+.sheet[data-theme="medical"] .doc-title, .sheet[data-theme="medical"] .block[data-type="h1"] { color:#115E59 !important; } 
+.sheet[data-theme="medical"] .doc-sub, .sheet[data-theme="medical"] .block[data-type="h2"] { color:#0F766E !important; } 
+.sheet[data-theme="medical"] .block[data-type="body"] { color:#115E59 !important; }
+.sheet[data-theme="medical"] .block[data-type="shape"] { background:#14B8A6 !important; }
+
+.sheet[data-theme="cafe"] { background:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
+.sheet[data-theme="cafe"] .doc-title, .sheet[data-theme="cafe"] .block[data-type="h1"] { color:#4A3B2A !important; } 
+.sheet[data-theme="cafe"] .doc-sub, .sheet[data-theme="cafe"] .block[data-type="h2"] { color:#6B5A48 !important; } 
+.sheet[data-theme="cafe"] .block[data-type="body"] { color:#4A3B2A !important; }
+.sheet[data-theme="cafe"] .block[data-type="shape"] { background:#C4A484 !important; }
 
 /* Block Styling */
+.lines{display:flex;flex-direction:column;flex:1;padding-top:14px; gap:16px;}
 .block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
 .block:hover{border-color:rgba(0,0,0,0.15)}
 .block:focus-within{border-color:var(--accent); border-style: solid; border-width: 1px;} 
@@ -94,96 +189,91 @@ input,select{font-family:inherit}
 .block[data-type="shape"]{height:12px; background:#000; border-radius:6px; margin: 10px 0; align-self: flex-start; width: 60px;}
 .block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:cover; background-position:center;}
 
-/* Accessible Themes - Rigidly applied via data-attribute to prevent editor stripping */
-.sheet[data-theme="spring"] { background:#F0FFF4 !important; border-top:12px solid #10B981 !important; }
-.sheet[data-theme="spring"] [data-type="h1"] { color:#065F46 !important; } 
-.sheet[data-theme="spring"] [data-type="h2"] { color:#047857 !important; } 
-.sheet[data-theme="spring"] [data-type="body"] { color:#065F46 !important; }
-.sheet[data-theme="spring"] .block[data-type="shape"] { background:#10B981 !important; }
+.empty{margin-top:14px;border:2px dashed var(--line);border-radius:12px;padding:48px 26px;text-align:center;break-inside:avoid;page-break-inside:avoid}
+.empty h3{font:800 22px var(--f-ui);margin:0 0 8px}
+.empty p{font:400 14px/1.6 var(--f-doc);color:var(--ink2);margin:0 0 18px}
+.empty .tpl{justify-content:center}
 
-.sheet[data-theme="summer"] { background:#FFFDE7 !important; border-top:12px solid #F59E0B !important; }
-.sheet[data-theme="summer"] [data-type="h1"] { color:#92400E !important; } 
-.sheet[data-theme="summer"] [data-type="h2"] { color:#B45309 !important; } 
-.sheet[data-theme="summer"] [data-type="body"] { color:#92400E !important; }
-.sheet[data-theme="summer"] .block[data-type="shape"] { background:#F59E0B !important; }
+.bottom-attr{display:flex;flex-direction:column;align-items:center;gap:15px;margin-top:40px;break-inside:avoid;page-break-inside:avoid}
+.attr{text-align:center;font:400 10.5px var(--f-doc);color:#B9B097;margin:0}
 
-.sheet[data-theme="autumn"] { background:#FFF3E0 !important; border-top:12px solid #D14C1E !important; }
-.sheet[data-theme="autumn"] [data-type="h1"] { color:#7C2D12 !important; } 
-.sheet[data-theme="autumn"] [data-type="h2"] { color:#9A3412 !important; } 
-.sheet[data-theme="autumn"] [data-type="body"] { color:#7C2D12 !important; }
-.sheet[data-theme="autumn"] .block[data-type="shape"] { background:#D14C1E !important; }
+#toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:80;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:10px;font:600 13.5px var(--f-doc);box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);animation:tin .22s both;transition:opacity .3s,transform .3s}
+.toast svg{width:16px;height:16px;color:#F0A183;flex:none}
+.toast.out{opacity:0;transform:translateY(8px)}
+body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast svg{color:var(--accent)}
 
-.sheet[data-theme="winter"] { background:#F0F9FF !important; border-top:12px solid #3B82F6 !important; }
-.sheet[data-theme="winter"] [data-type="h1"] { color:#1E3A8A !important; } 
-.sheet[data-theme="winter"] [data-type="h2"] { color:#3730A3 !important; } 
-.sheet[data-theme="winter"] [data-type="body"] { color:#1E3A8A !important; }
-.sheet[data-theme="winter"] .block[data-type="shape"] { background:#3B82F6 !important; }
+@keyframes tin{from{opacity:0;transform:translateY(10px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-.sheet[data-theme="medical"] { background:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
-.sheet[data-theme="medical"] [data-type="h1"] { color:#115E59 !important; } 
-.sheet[data-theme="medical"] [data-type="h2"] { color:#0F766E !important; } 
-.sheet[data-theme="medical"] [data-type="body"] { color:#115E59 !important; }
-.sheet[data-theme="medical"] .block[data-type="shape"] { background:#14B8A6 !important; }
+@media print{
+  @page{size:A4;margin:0} body{background:#fff}
+  .skip-link, .topbar,.rail,.block-tools,#toasts{display:none!important}
+  .app{display:block} .stage{display:block;padding:0;background:none;min-height:0}
+  .sheet{width:210mm;min-height:297mm;margin:0;border-radius:0;box-shadow:none;padding:16mm 15mm 10mm}
+  .sheet.landscape{width:297mm;min-height:210mm} @page landscape{size: A4 landscape; margin: 0;} .sheet.landscape{page: landscape;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 
-.sheet[data-theme="cafe"] { background:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
-.sheet[data-theme="cafe"] [data-type="h1"] { color:#4A3B2A !important; } 
-.sheet[data-theme="cafe"] [data-type="h2"] { color:#6B5A48 !important; } 
-.sheet[data-theme="cafe"] [data-type="body"] { color:#4A3B2A !important; }
-.sheet[data-theme="cafe"] .block[data-type="shape"] { background:#C4A484 !important; }
-
-/* ---------- utility ---------- */
-.hidden{display:none !important}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface);color:var(--text);padding:12px 20px;border-radius:6px;border:1px solid var(--line);font:600 13px var(--f-ui);z-index:100;box-shadow:0 10px 20px rgba(0,0,0,0.3)}
-
-@media print {
-  @page { size: A4; margin: 0; }
-  body { background: #fff; overflow: visible; }
-  .topbar, .rail { display: none !important; }
-  .app { display: block; height: auto; }
-  .stage { padding: 0; background: none; overflow: visible; display: block; }
-  .sheet { box-shadow: none; margin: 0; max-width: 100%; }
-  .block-tools { display: none !important; }
+@media(max-width: 980px){
+  .app{display:flex;flex-direction:column;} .stage{order:1;padding:24px 16px 40px;background-image:none;background-color:var(--paper);}
+  .rail{order:2;position:static;height:auto;max-height:none;border-right:0;border-top:1px solid var(--line);padding:24px 20px 60px;width:100%;}
+}
+@media(max-width: 700px){
+  .topbar{padding:10px 12px;justify-content:center;gap:8px;} .brand-name{font-size:17px;} .brand-sub{display:none;}
+  .actions{width:100%;justify-content:center;flex-wrap:wrap;gap:8px;} .actions .btn span{display:none;} .actions .btn{padding:10px;}
+  .actions .divider{display:none;} .actions .btn-group{gap:4px;}
+  .doc-title{font-size:26px;} .doc-sub{font-size:15px;} .sheet{padding:30px 20px;min-height:auto;} .sheet.landscape{width:100%;min-height:auto;}
 }
 </style>
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <header class="topbar">
   <div class="brand">
-    <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <rect x="10" y="10" width="80" height="80" rx="16" fill="#22262f" stroke="#2d313c" stroke-width="4"/>
-      <path d="M30 25 H55 C65 25 70 32 70 40 C70 48 65 55 55 55 H40 V75 H30 Z" fill="#ff4d4d"/>
-      <circle cx="65" cy="65" r="15" fill="#00e0ff" opacity="0.9"/>
-      <rect x="55" y="55" width="20" height="20" fill="#0f1115" rx="4"/>
+    <svg class="mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="PosterD45h Logo">
+      <rect width="120" height="120" rx="26" fill="#1A1D21"/>
+      <rect x="32" y="30" width="56" height="70" rx="8" fill="#FFFFFF"/>
+      <path d="M44 50 H76 M44 65 H68 M44 80 H76" stroke="#D14C1E" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="88" cy="88" r="15" fill="#00e0ff"/>
     </svg>
-    <div class="brand-name">Poster<span>D45h</span></div>
+    <div class="brand-text"><span class="brand-name">PosterD45h</span><span class="brand-sub">free · open · rapid poster designer</span></div>
   </div>
   <div class="actions">
-    <button class="btn ghost" id="undoBtn">Undo</button>
-    <button class="btn ghost" id="redoBtn">Redo</button>
-    <button class="btn ghost" id="pngBtn">Export PNG</button>
-    <button class="btn accent" id="printBtn">Print / PDF</button>
+    <div class="btn-group">
+      <button class="btn ghost" id="undoBtn" title="Undo (Ctrl+Z)" disabled>Undo</button>
+      <button class="btn ghost" id="redoBtn" title="Redo (Ctrl+Y)" disabled>Redo</button>
+    </div>
+    <div class="divider"></div>
+    <div class="btn-group">
+      <button class="btn ghost" id="newBtn">New</button>
+      <button class="btn ghost" id="backupBtn" title="Download Backup">Backup</button>
+      <button class="btn ghost" id="restoreBtn" title="Restore Backup">Restore</button>
+    </div>
+    <div class="divider"></div>
+    <div class="btn-group">
+      <button class="btn ghost" id="pngBtn">Export PNG</button>
+      <button class="btn accent" id="printBtn">Print / PDF</button>
+      <button class="btn ghost" id="darkToggleBtn" title="Toggle Dark Mode">Dark Mode</button>
+    </div>
   </div>
 </header>
 
-<main class="app">
+<main class="app" id="main-content">
   <aside class="rail">
-    <!-- Text Formatting -->
+    
     <section class="panel">
-      <div class="panel-title">Text Format</div>
-      
+      <h2 class="k"><b>F</b>Text Format</h2>
       <div class="apply-all-wrapper">
         <input type="checkbox" id="applyAllChk">
         <label for="applyAllChk">Apply to ALL text blocks</label>
       </div>
-
-      <!-- Row 1: Fonts & Sizes -->
       <div class="format-bar">
         <select class="fmt-select" id="fontSel" title="Font Family">
           <option value="Lexend">Lexend</option>
           <option value="Atkinson Hyperlegible">Atkinson</option>
-          <option value="Poppins">Poppins</option>
-          <option value="Merriweather">Merriweather</option>
           <option value="Arial">Arial</option>
         </select>
         <select class="fmt-select" id="sizeSel" title="Font Size">
@@ -192,11 +282,9 @@ input,select{font-family:inherit}
           <option value="5">Large</option>
           <option value="7">X-Large</option>
         </select>
-        <input type="color" class="fmt-color" id="textColor" value="#000000" title="Text Color">
-        <input type="color" class="fmt-color" id="bgColor" value="#ffff00" title="Highlight Color">
+        <input type="color" class="fmt-color" id="textColor" value="#1A1D21" title="Text Color">
+        <input type="color" class="fmt-color" id="bgColor" value="#FFFF00" title="Highlight Color">
       </div>
-
-      <!-- Row 2: Weights & Lists -->
       <div class="format-bar">
         <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
         <button class="fmt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
@@ -204,461 +292,439 @@ input,select{font-family:inherit}
         <button class="fmt-btn" data-cmd="insertUnorderedList" title="Bullet List">•</button>
         <button class="fmt-btn" data-cmd="insertOrderedList" title="Number List">1.</button>
       </div>
-
-      <!-- Row 3: Alignment -->
       <div class="format-bar">
-        <button class="fmt-btn" data-cmd="justifyLeft" title="Align Left">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
-        </button>
-        <button class="fmt-btn" data-cmd="justifyCenter" title="Align Center">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg>
-        </button>
-        <button class="fmt-btn" data-cmd="justifyRight" title="Align Right">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>
-        </button>
-        <button class="fmt-btn" data-cmd="justifyFull" title="Justify">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
+        <button class="fmt-btn" data-cmd="justifyLeft" title="Align Left"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg></button>
+        <button class="fmt-btn" data-cmd="justifyCenter" title="Align Center"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg></button>
+        <button class="fmt-btn" data-cmd="justifyRight" title="Align Right"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg></button>
+        <button class="fmt-btn" data-cmd="justifyFull" title="Justify"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       </div>
-      <p style="font-size:11px; color:var(--text-dim); margin:8px 0 0 0;">Select text to format individually, or tick the box above to format everything.</p>
     </section>
 
     <section class="panel">
-      <div class="panel-title">Add Blocks</div>
+      <h2 class="k"><b>01</b>Add Blocks</h2>
       <div class="block-grid">
         <button class="block-btn" data-add="h1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M4 6h16M4 18h16"/></svg>Heading</button>
         <button class="block-btn" data-add="h2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h12M6 8h12M6 16h12"/></svg>Subhead</button>
         <button class="block-btn" data-add="body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>Text</button>
         <button class="block-btn" data-add="shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Shape</button>
-        <button class="block-btn" data-add="image" style="grid-column: span 2;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image / Upload</button>
+        <button class="block-btn" data-add="image" style="grid-column: span 2;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image Upload</button>
       </div>
     </section>
 
     <section class="panel">
-      <div class="panel-title">Preset Layouts</div>
-      <div class="tpl-list">
-        <button class="tpl-btn" data-tpl="event">📋 Event Poster</button>
-        <button class="tpl-btn" data-tpl="notice">⚠️ Important Notice</button>
-        <button class="tpl-btn" data-tpl="schedule">🗓️ Daily Schedule</button>
-        <button class="tpl-btn" data-tpl="menu">☕ Cafe Menu</button>
-        <button class="tpl-btn" data-tpl="social">💬 Social Story</button>
-        <button class="tpl-btn" data-tpl="nowNext">⏭️ Now & Next Board</button>
-        <button class="tpl-btn" data-tpl="welcome">👋 Welcome Poster</button>
-        <button class="tpl-btn" data-tpl="rules">📜 Classroom Rules</button>
+      <h2 class="k"><b>02</b>Quick starts</h2>
+      <div class="tpl" id="tpls"></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>03</b>Sheet Settings</h2>
+      <div class="field">
+        <label for="sheetFormat">Sheet format</label>
+        <select id="sheetFormat"><option value="portrait">A4 Portrait</option><option value="landscape">A4 Landscape</option></select>
+      </div>
+      <div class="field">
+        <label for="themeSel">Poster theme</label>
+        <select id="themeSel">
+          <option value="default">Plain White</option>
+          <option value="spring">Spring (Green)</option>
+          <option value="summer">Summer (Yellow)</option>
+          <option value="autumn">Autumn (Orange)</option>
+          <option value="winter">Winter (Blue)</option>
+          <option value="medical">Medical (Teal)</option>
+          <option value="cafe">Cafe / Menu (Cream)</option>
+        </select>
       </div>
     </section>
 
     <section class="panel">
-      <div class="panel-title">Sheet Settings</div>
-      
-      <div class="orient-list" style="margin-bottom: 16px;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px; font-weight:700;">Orientation</div>
-        <button class="orient-btn active" data-orient="portrait"><span style="font-size:16px">📄</span>Portrait</button>
-        <button class="orient-btn" data-orient="landscape"><span style="font-size:16px">📃</span>Landscape</button>
-      </div>
-
-      <div class="theme-list">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px; font-weight:700;">Theme</div>
-        <button class="theme-btn active" data-theme="default"><span class="color-dot" style="background:#fff"></span>Plain White</button>
-        <button class="theme-btn" data-theme="spring"><span class="color-dot" style="background:#10B981"></span>Spring (Green)</button>
-        <button class="theme-btn" data-theme="summer"><span class="color-dot" style="background:#F59E0B"></span>Summer (Yellow)</button>
-        <button class="theme-btn" data-theme="autumn"><span class="color-dot" style="background:#D14C1E"></span>Autumn (Orange)</button>
-        <button class="theme-btn" data-theme="winter"><span class="color-dot" style="background:#3B82F6"></span>Winter (Blue)</button>
-        <button class="theme-btn" data-theme="medical"><span class="color-dot" style="background:#14B8A6"></span>Medical (Teal)</button>
-        <button class="theme-btn" data-theme="cafe"><span class="color-dot" style="background:#C4A484"></span>Cafe (Cream)</button>
-      </div>
+      <h2 class="k"><b>04</b>About</h2>
+      <p class="about">Everything runs in your browser — no account, no tracking, nothing uploaded. Your poster saves automatically on this device.</p>
+      <p class="about">This whole tool is one HTML file: view source, fork it, host it anywhere.</p>
     </section>
   </aside>
 
-  <section class="stage" id="stage">
+  <section class="stage">
     <div class="sheet portrait" id="sheet" data-theme="default">
-      <!-- Blocks injected here -->
+      <h1 class="doc-title" id="docTitle" contenteditable="true" data-ph="Poster title" spellcheck="true"></h1>
+      <div class="doc-sub" id="docSub" contenteditable="true" data-ph="Subtitle (optional)" spellcheck="true"></div>
+      <div class="lines" id="lines"></div>
+      <div class="empty" id="empty">
+        <h3>Nothing on the sheet yet</h3>
+        <p>Use the panel on the left to add text blocks, images, and shapes.<br>Or start from a quick template:</p>
+        <div class="tpl" id="tplsEmpty"></div>
+      </div>
+      <div class="bottom-attr">
+        <p class="attr">PosterD45h by Lee Williams</p>
+      </div>
     </div>
   </section>
 </main>
 
-<input type="file" id="imageUpload" class="hidden" accept="image/*">
+<input type="file" id="imageUpload" class="hidden" accept="image/*" style="display:none;">
+<div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function(){
-  const sheet = document.getElementById('sheet');
-  const stage = document.getElementById('stage');
-  const imageUpload = document.getElementById('imageUpload');
-  const applyAllChk = document.getElementById('applyAllChk');
+'use strict';
 
-  let history = [];
-  let hIndex = -1;
-  let currentTargetBlock = null;
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  const placeholderText = {
-    h1: "Main Headline",
-    h2: "Sub Heading",
-    body: "Click to edit text. You can type anything here. Make it long, make it short, make it punchy."
-  };
+const LS_KEY='posterd45h.doc.v1';
+const LS_DARK='posterd45h.dark';
 
-  // Expanded Preset Templates
-  const TEMPLATES = {
-    event: {
-      theme: 'winter', 
-      blocks: [
-        { type: 'h1', text: 'Coffee Morning', align: 'center' },
-        { type: 'h2', text: 'Saturday, 10am – 12pm · St Mary’s Hall', align: 'center' },
-        { type: 'shape', align: 'center' },
-        { type: 'body', text: 'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome! Bring a friend.', align: 'center' }
-      ]
-    },
-    notice: {
-      theme: 'autumn', 
-      blocks: [
-        { type: 'h1', text: 'Important Notice', align: 'left' },
-        { type: 'shape', align: 'left' },
-        { type: 'body', text: 'Please be aware that the building will be closed on Monday for maintenance. We will reopen on Tuesday at 9:00 AM.', align: 'left' }
-      ]
-    },
-    schedule: {
-      theme: 'spring', 
-      blocks: [
-        { type: 'h1', text: 'My Daily Routine', align: 'left' },
-        { type: 'h2', text: 'Morning', align: 'left' },
-        { type: 'body', text: 'Wake up and eat breakfast. Brush my teeth. Go to school.', align: 'left' },
-        { type: 'h2', text: 'Afternoon', align: 'left' },
-        { type: 'body', text: 'Eat lunch. Play with friends. Art and music.', align: 'left' }
-      ]
-    },
-    menu: {
-      theme: 'cafe', 
-      blocks: [
-        { type: 'h1', text: 'Today’s Menu', align: 'center' },
-        { type: 'shape', align: 'center' },
-        { type: 'h2', text: 'Starters', align: 'center' },
-        { type: 'body', text: 'Soup of the day. Garlic bread.', align: 'center' },
-        { type: 'h2', text: 'Mains', align: 'center' },
-        { type: 'body', text: 'Sandwiches and salad. Cake and tea.', align: 'center' }
-      ]
-    },
-    social: {
-      theme: 'medical',
-      blocks: [
-        { type: 'h1', text: 'Going to the Doctor', align: 'left' },
-        { type: 'shape', align: 'left' },
-        { type: 'body', text: 'I feel sick. I go to the doctor with Mum. I sit in the big chair.', align: 'left' },
-        { type: 'body', text: 'The doctor looks at my teeth. I am brave. I get a sticker.', align: 'left' }
-      ]
-    },
-    nowNext: {
-      theme: 'summer',
-      blocks: [
-        { type: 'h1', text: 'Now and Next', align: 'center' },
-        { type: 'h2', text: 'NOW:', align: 'left' },
-        { type: 'body', text: 'Tidy up the toys.', align: 'left' },
-        { type: 'h2', text: 'NEXT:', align: 'left' },
-        { type: 'body', text: 'Choose a game to play.', align: 'left' }
-      ]
-    },
-    welcome: {
-      theme: 'spring',
-      blocks: [
-        { type: 'h1', text: 'Welcome to Class 2!', align: 'center' },
-        { type: 'shape', align: 'center' },
-        { type: 'body', text: 'We are so happy to have you here. Please hang your coat on your peg and put your book bag in the box.', align: 'center' }
-      ]
-    },
-    rules: {
-      theme: 'autumn',
-      blocks: [
-        { type: 'h1', text: 'Our Classroom Rules', align: 'left' },
-        { type: 'shape', align: 'left' },
-        { type: 'body', text: '1. We listen to each other.\n2. We put our hands up to speak.\n3. We are kind and helpful.\n4. We look after our toys.', align: 'left' }
-      ]
-    }
-  };
+const TEMPLATES = {
+  event: { name:'Event Poster', theme:'winter', blocks:[
+    { type:'h1', text:'Coffee Morning', align:'center' },
+    { type:'h2', text:'Saturday, 10am – 12pm · St Mary’s Hall', align:'center' },
+    { type:'shape', align:'center' },
+    { type:'body', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome! Bring a friend.', align:'center' }
+  ]},
+  notice: { name:'Important Notice', theme:'autumn', blocks:[
+    { type:'h1', text:'Important Notice', align:'left' },
+    { type:'shape', align:'left' },
+    { type:'body', text:'Please be aware that the building will be closed on Monday for maintenance. We will reopen on Tuesday at 9:00 AM.', align:'left' }
+  ]},
+  schedule: { name:'Daily Schedule', theme:'spring', blocks:[
+    { type:'h1', text:'My Daily Routine', align:'left' },
+    { type:'h2', text:'Morning', align:'left' },
+    { type:'body', text:'Wake up and eat breakfast. Brush my teeth. Go to school.', align:'left' },
+    { type:'h2', text:'Afternoon', align:'left' },
+    { type:'body', text:'Eat lunch. Play with friends. Art and music.', align:'left' }
+  ]},
+  menu: { name:'Cafe Menu', theme:'cafe', blocks:[
+    { type:'h1', text:'Today’s Menu', align:'center' },
+    { type:'shape', align:'center' },
+    { type:'h2', text:'Starters', align:'center' },
+    { type:'body', text:'Soup of the day. Garlic bread.', align:'center' },
+    { type:'h2', text:'Mains', align:'center' },
+    { type:'body', text:'Sandwiches and salad. Cake and tea.', align:'center' }
+  ]},
+  social: { name:'Social Story', theme:'medical', blocks:[
+    { type:'h1', text:'Going to the Doctor', align:'left' },
+    { type:'shape', align:'left' },
+    { type:'body', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair.', align:'left' },
+    { type:'body', text:'The doctor looks at my teeth. I am brave. I get a sticker.', align:'left' }
+  ]},
+  nowNext: { name:'Now & Next Board', theme:'summer', blocks:[
+    { type:'h1', text:'Now and Next', align:'center' },
+    { type:'h2', text:'NOW:', align:'left' },
+    { type:'body', text:'Tidy up the toys.', align:'left' },
+    { type:'h2', text:'NEXT:', align:'left' },
+    { type:'body', text:'Choose a game to play.', align:'left' }
+  ]},
+  welcome: { name:'Welcome Poster', theme:'spring', blocks:[
+    { type:'h1', text:'Welcome to Class 2!', align:'center' },
+    { type:'shape', align:'center' },
+    { type:'body', text:'We are so happy to have you here. Please hang your coat on your peg and put your book bag in the box.', align:'center' }
+  ]},
+  rules: { name:'Classroom Rules', theme:'autumn', blocks:[
+    { type:'h1', text:'Our Classroom Rules', align:'left' },
+    { type:'shape', align:'left' },
+    { type:'body', text:'1. We listen to each other.\n2. We put our hands up to speak.\n3. We are kind and helpful.\n4. We look after our toys.', align:'left' }
+  ]}
+};
 
-  function init() {
-    sheet.innerHTML = `
-      <div class="block" data-type="h1" contenteditable="true">${placeholderText.h1}</div>
-      <div class="block" data-type="h2" contenteditable="true">${placeholderText.h2}</div>
-      <div class="block" data-type="body" contenteditable="true">${placeholderText.body}</div>
-    `;
-    attachBlockListeners();
-    pushHistory();
-  }
+let uidSeq=1;
+const uid=()=>'b'+(uidSeq++)+Date.now().toString(36);
+function newDoc(){return{title:'',subtitle:'',format:'portrait',theme:'default',blocks:[]}}
+let doc=newDoc();
 
-  function attachBlockListeners() {
-    document.querySelectorAll('.block').forEach(block => {
-      if(block.dataset.attached) return;
-      
-      block.addEventListener('mouseenter', () => {
-        block.classList.add('tools-visible');
-        if(!block.querySelector('.block-tools')) {
-          const tools = document.createElement('div');
-          tools.className = 'block-tools';
-          tools.innerHTML = `
-            <button data-act="up" title="Move Up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
-            <button data-act="down" title="Move Down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-            <button data-act="del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-          `;
-          block.appendChild(tools);
-          
-          tools.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const btn = e.target.closest('button');
-            if(!btn) return;
-            const act = btn.dataset.act;
-            if(act === 'up' && block.previousElementSibling) {
-              sheet.insertBefore(block, block.previousElementSibling);
-            } else if(act === 'down' && block.nextElementSibling) {
-              sheet.insertBefore(block.nextElementSibling, block);
-            } else if(act === 'del') {
-              block.remove();
-            }
-            pushHistory();
-          });
-        }
-      });
+const sheet=$('#sheet'), linesEl=$('#lines'), titleEl=$('#docTitle'), subEl=$('#docSub'), imageUpload=$('#imageUpload'), applyAllChk=$('#applyAllChk');
 
-      block.addEventListener('mouseleave', () => {
-        block.classList.remove('tools-visible');
-      });
-
-      block.addEventListener('mousedown', (e) => {
-        if(e.target.closest('.block-tools')) {
-          e.preventDefault();
-        }
-      });
-
-      block.dataset.attached = "true";
-    });
-  }
-
-  // Add Block
-  document.querySelectorAll('[data-add]').forEach(btn => {
-    btn.onclick = () => {
-      const type = btn.dataset.add;
-      if(type === 'image') {
-        currentTargetBlock = null;
-        imageUpload.click();
-        return;
-      }
-
-      const block = document.createElement('div');
-      block.className = 'block';
-      block.dataset.type = type;
-      block.setAttribute('contenteditable', 'true');
-      block.textContent = placeholderText[type] || "Edit me";
-      
-      sheet.appendChild(block);
-      attachBlockListeners();
-      pushHistory();
-      block.focus();
-    };
-  });
-
-  // Apply Templates
-  document.querySelectorAll('[data-tpl]').forEach(btn => {
-    btn.onclick = () => {
-      const tplKey = btn.dataset.tpl;
-      const tpl = TEMPLATES[tplKey];
-      
-      // Apply theme via rigid data-attribute
-      sheet.setAttribute('data-theme', tpl.theme);
-      document.querySelectorAll('.theme-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.theme === tpl.theme);
-      });
-
-      // Build blocks
-      sheet.innerHTML = '';
-      tpl.blocks.forEach(item => {
-        const block = document.createElement('div');
-        block.className = 'block';
-        block.dataset.type = item.type;
-        if(item.type !== 'shape') {
-          block.setAttribute('contenteditable', 'true');
-          block.textContent = item.text;
-        }
-        if(item.align) {
-          block.style.textAlign = item.align;
-        }
-        sheet.appendChild(block);
-      });
-      attachBlockListeners();
-      pushHistory();
-      toast('Template loaded!');
-    };
-  });
-
-  // Image Upload Handler
-  imageUpload.onchange = (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      if(currentTargetBlock) {
-        currentTargetBlock.style.backgroundImage = `url(${ev.target.result})`;
-        currentTargetBlock.textContent = '';
-      } else {
-        const block = document.createElement('div');
-        block.className = 'block';
-        block.dataset.type = 'image';
-        block.style.backgroundImage = `url(${ev.target.result})`;
-        block.textContent = '';
-        sheet.appendChild(block);
-        attachBlockListeners();
-        pushHistory();
-      }
-      imageUpload.value = '';
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // --- TEXT FORMATTING LOGIC ---
-  document.execCommand('styleWithCSS', false, true);
-
-  // Helper: Apply to all blocks
-  function formatAllBlocks(cmd, value) {
-    document.querySelectorAll('.block[contenteditable="true"]').forEach(b => {
-      b.focus(); // Required for execCommand to work on non-selected elements sometimes
-      
-      if(cmd === 'fontName') b.style.fontFamily = value;
-      else if(cmd === 'fontSize') {
-        const sizeMap = {'2': '12px', '3': '16px', '5': '24px', '7': '32px'};
-        b.style.fontSize = sizeMap[value] || '16px';
-      }
-      else if(cmd === 'foreColor') b.style.color = value;
-      else if(cmd === 'hiliteColor') b.style.backgroundColor = value;
-      else if(cmd.startsWith('justify')) b.style.textAlign = cmd.replace('justify','').toLowerCase();
-      else if(cmd === 'bold') b.style.fontWeight = (b.style.fontWeight === 'bold') ? 'normal' : 'bold';
-      else if(cmd === 'italic') b.style.fontStyle = (b.style.fontStyle === 'italic') ? 'normal' : 'italic';
-      else if(cmd === 'underline') b.style.textDecoration = (b.style.textDecoration === 'underline') ? 'none' : 'underline';
-      else if(cmd === 'insertUnorderedList' || cmd === 'insertOrderedList') {
-        // Lists are tricky to force globally via inline style, using execCommand as fallback
-        document.execCommand(cmd, false, null);
-      }
-    });
-  }
-
-  document.querySelectorAll('[data-cmd]').forEach(btn => {
-    btn.addEventListener('mousedown', (e) => { e.preventDefault(); });
-    btn.onclick = () => {
-      const cmd = btn.dataset.cmd;
-      if(applyAllChk.checked) {
-        formatAllBlocks(cmd, null);
-      } else {
-        document.execCommand(cmd, false, null);
-      }
-      pushHistory();
-    };
-  });
-
-  document.getElementById('fontSel').onchange = (e) => {
-    if(applyAllChk.checked) formatAllBlocks('fontName', e.target.value);
-    else document.execCommand('fontName', false, e.target.value);
-    pushHistory();
-  };
-  
-  document.getElementById('sizeSel').onchange = (e) => {
-    if(applyAllChk.checked) formatAllBlocks('fontSize', e.target.value);
-    else document.execCommand('fontSize', false, e.target.value);
-    pushHistory();
-  };
-  
-  document.getElementById('textColor').addEventListener('input', (e) => {
-    if(applyAllChk.checked) formatAllBlocks('foreColor', e.target.value);
-    else document.execCommand('foreColor', false, e.target.value);
-  });
-  
-  document.getElementById('bgColor').addEventListener('input', (e) => {
-    if(applyAllChk.checked) formatAllBlocks('hiliteColor', e.target.value);
-    else document.execCommand('hiliteColor', false, e.target.value);
-  });
-
-  // --- ORIENTATION & THEME LOGIC ---
-  
-  // Orientation Switcher
-  document.querySelectorAll('[data-orient]').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.orient-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      sheet.classList.remove('portrait', 'landscape');
-      sheet.classList.add(btn.dataset.orient);
-      pushHistory();
-    };
-  });
-
-  // Theme Switcher
-  document.querySelectorAll('[data-theme]').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      sheet.setAttribute('data-theme', btn.dataset.theme); // Rigid data-attribute application
-      pushHistory();
-    };
-  });
-
-  // --- HISTORY / UNDO REDO ---
-  function pushHistory() {
+let history = [];
+let hIndex = -1;
+function pushHistory() {
     history = history.slice(0, hIndex + 1);
-    history.push(sheet.innerHTML);
-    if(history.length > 50) history.shift();
+    history.push(JSON.stringify(doc));
+    if (history.length > 50) history.shift();
     else hIndex++;
-    updateUndoRedo();
+    updateUndoRedoBtns();
+}
+function undo() { if (hIndex > 0) { hIndex--; doc = JSON.parse(history[hIndex]); renderAll(); updateUndoRedoBtns(); } }
+function redo() { if (hIndex < history.length - 1) { hIndex++; doc = JSON.parse(history[hIndex]); renderAll(); updateUndoRedoBtns(); } }
+function updateUndoRedoBtns() {
+    $('#undoBtn').disabled = hIndex <= 0;
+    $('#redoBtn').disabled = hIndex >= history.length - 1;
+}
+
+let saveT=null;
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){}},350);}
+
+function renderAll(){
+  titleEl.textContent=doc.title||'';
+  subEl.textContent=doc.subtitle||'';
+  sheet.classList.toggle('landscape', doc.format === 'landscape');
+  sheet.classList.toggle('portrait', doc.format === 'portrait');
+  sheet.setAttribute('data-theme', doc.theme);
+  $('#sheetFormat').value=doc.format;
+  $('#themeSel').value=doc.theme;
+  renderBlocks();
+}
+
+function renderBlocks(){
+  linesEl.innerHTML = doc.blocks.map(blockHTML).join('');
+  $('#empty').hidden = doc.blocks.length > 0;
+  attachBlockListeners();
+}
+
+function blockHTML(b){
+  const alignStyle = b.align ? `text-align:${b.align};` : '';
+  let content = '';
+  if(b.type === 'shape'){
+    content = `<div class="block" data-type="shape" data-uid="${b.uid}" style="${alignStyle}"></div>`;
+  } else if(b.type === 'image'){
+    const imgSrc = b.imgSrc ? `background-image:url('${b.imgSrc}');` : '';
+    content = `<div class="block" data-type="image" data-uid="${b.uid}" style="${imgSrc}"></div>`;
+  } else {
+    content = `<div class="block" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" style="${alignStyle}">${esc(b.text || '')}</div>`;
   }
+  return content + `
+    <div class="block-tools" data-uid="${b.uid}">
+      <button data-act="up" title="Move Up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+      <button data-act="down" title="Move Down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <button data-act="del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+    </div>
+  `;
+}
 
-  function undo() { if(hIndex > 0) { hIndex--; sheet.innerHTML = history[hIndex]; attachBlockListeners(); updateUndoRedo(); } }
-  function redo() { if(hIndex < history.length - 1) { hIndex++; sheet.innerHTML = history[hIndex]; attachBlockListeners(); updateUndoRedo(); } }
-
-  function updateUndoRedo() {
-    document.getElementById('undoBtn').disabled = hIndex <= 0;
-    document.getElementById('redoBtn').disabled = hIndex >= history.length - 1;
-  }
-
-  document.getElementById('undoBtn').onclick = undo;
-  document.getElementById('redoBtn').onclick = redo;
-
-  // Save on text edits
-  sheet.addEventListener('input', () => {
-    clearTimeout(window.saveT);
-    window.saveT = setTimeout(pushHistory, 500);
+function attachBlockListeners() {
+  document.querySelectorAll('.block-tools').forEach(tools => {
+    if(tools.dataset.attached) return;
+    tools.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const act = btn.dataset.act;
+      const uidVal = tools.dataset.uid;
+      const index = doc.blocks.findIndex(b => b.uid === uidVal);
+      if(index === -1) return;
+      
+      if(act === 'up' && index > 0) {
+        [doc.blocks[index], doc.blocks[index-1]] = [doc.blocks[index-1], doc.blocks[index]];
+      } else if(act === 'down' && index < doc.blocks.length - 1) {
+        [doc.blocks[index], doc.blocks[index+1]] = [doc.blocks[index+1], doc.blocks[index]];
+      } else if(act === 'del') {
+        doc.blocks.splice(index, 1);
+      }
+      pushHistory(); renderBlocks(); save();
+    });
+    tools.dataset.attached = "true";
   });
+}
 
-  // --- EXPORT & PRINT ---
-  document.getElementById('pngBtn').onclick = async () => {
-    document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
-    document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
-    
+// Add Block
+document.querySelectorAll('[data-add]').forEach(btn => {
+  btn.onclick = () => {
+    const type = btn.dataset.add;
+    if(type === 'image') {
+      imageUpload.click();
+      return;
+    }
+    const newBlock = { uid: uid(), type: type, text: type === 'h1' ? 'Main Headline' : (type === 'h2' ? 'Sub Heading' : 'Enter text here...') };
+    doc.blocks.push(newBlock);
+    pushHistory(); renderBlocks(); save();
+  };
+});
+
+// Image Upload
+imageUpload.onchange = (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const newBlock = { uid: uid(), type: 'image', imgSrc: ev.target.result };
+    doc.blocks.push(newBlock);
+    pushHistory(); renderBlocks(); save();
+    imageUpload.value = '';
+  };
+  reader.readAsDataURL(file);
+};
+
+// Apply Templates
+['tpls','tplsEmpty'].forEach(id => { 
+  $('#'+id).innerHTML = Object.keys(TEMPLATES).map(k => `<button data-tpl="${k}">${esc(TEMPLATES[k].name)}</button>`).join(''); 
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-tpl]'); 
+  if(!b) return;
+  const tpl = TEMPLATES[b.dataset.tpl];
+  doc.theme = tpl.theme;
+  doc.blocks = tpl.blocks.map(b => ({ ...b, uid: uid() }));
+  pushHistory(); renderAll(); save();
+  toast('Template loaded!');
+});
+
+// Text Formatting
+document.execCommand('styleWithCSS', false, true);
+
+function formatAllBlocks(cmd, value) {
+  document.querySelectorAll('.block[contenteditable="true"]').forEach(b => {
+    b.focus();
+    if(cmd === 'fontName') b.style.fontFamily = value;
+    else if(cmd === 'fontSize') {
+      const sizeMap = {'2': '12px', '3': '16px', '5': '24px', '7': '32px'};
+      b.style.fontSize = sizeMap[value] || '16px';
+    }
+    else if(cmd === 'foreColor') b.style.color = value;
+    else if(cmd === 'hiliteColor') b.style.backgroundColor = value;
+    else if(cmd.startsWith('justify')) b.style.textAlign = cmd.replace('justify','').toLowerCase();
+    else if(cmd === 'bold') b.style.fontWeight = (b.style.fontWeight === 'bold') ? 'normal' : 'bold';
+    else if(cmd === 'italic') b.style.fontStyle = (b.style.fontStyle === 'italic') ? 'normal' : 'italic';
+    else if(cmd === 'underline') b.style.textDecoration = (b.style.textDecoration === 'underline') ? 'none' : 'underline';
+  });
+}
+
+document.querySelectorAll('.fmt-btn[data-cmd]').forEach(btn => {
+  btn.addEventListener('mousedown', (e) => { e.preventDefault(); });
+  btn.onclick = () => {
+    const cmd = btn.dataset.cmd;
+    if(applyAllChk.checked) formatAllBlocks(cmd, null);
+    else document.execCommand(cmd, false, null);
+    pushHistory();
+  };
+});
+
+ $('#fontSel').onchange = (e) => {
+  if(applyAllChk.checked) formatAllBlocks('fontName', e.target.value);
+  else document.execCommand('fontName', false, e.target.value);
+  pushHistory();
+};
+ $('#sizeSel').onchange = (e) => {
+  if(applyAllChk.checked) formatAllBlocks('fontSize', e.target.value);
+  else document.execCommand('fontSize', false, e.target.value);
+  pushHistory();
+};
+ $('#textColor').addEventListener('input', (e) => {
+  if(applyAllChk.checked) formatAllBlocks('foreColor', e.target.value);
+  else document.execCommand('foreColor', false, e.target.value);
+});
+ $('#bgColor').addEventListener('input', (e) => {
+  if(applyAllChk.checked) formatAllBlocks('hiliteColor', e.target.value);
+  else document.execCommand('hiliteColor', false, e.target.value);
+});
+
+// Settings Listeners
+ $('#sheetFormat').onchange = (e) => { doc.format = e.target.value; pushHistory(); renderAll(); save(); };
+ $('#themeSel').onchange = (e) => { doc.theme = e.target.value; pushHistory(); renderAll(); save(); };
+ $('#undoBtn').onclick = undo;
+ $('#redoBtn').onclick = redo;
+
+// Title / Subtitle / Block Text Edits
+function ce(el, key, isBlock, uidVal){
+  el.addEventListener('input', () => {
+    if(isBlock) {
+      const block = doc.blocks.find(b => b.uid === uidVal);
+      if(block) block.text = el.textContent;
+    } else {
+      doc[key] = el.textContent;
+    }
+    save();
+  });
+  el.addEventListener('blur', () => pushHistory());
+}
+ce(titleEl, 'title', false);
+ce(subEl, 'subtitle', false);
+
+linesEl.addEventListener('focusin', (e) => {
+  const block = e.target.closest('.block[contenteditable]');
+  if(block) {
+    const uidVal = block.dataset.uid;
+    block.oninput = () => {
+      const b = doc.blocks.find(x => x.uid === uidVal);
+      if(b) b.text = block.textContent;
+      save();
+    };
+    block.onblur = () => pushHistory();
+  }
+});
+
+// Top Bar Actions
+ $('#newBtn').onclick = () => {
+  if(confirm('Start a new poster? This will clear the current sheet.')) {
+    doc = newDoc(); pushHistory(); renderAll(); save(); toast('Fresh sheet ready.');
+  }
+};
+
+ $('#pngBtn').onclick = async () => {
+  document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
+  toast('Rendering PNG…');
+  try {
     const canvas = await html2canvas(sheet, { scale: 2, backgroundColor: null, logging: false });
     const link = document.createElement('a');
     link.download = 'posterd45h.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
-
-    document.querySelectorAll('.block-tools').forEach(t => t.style.removeProperty('display'));
-    document.querySelectorAll('.block').forEach(b => b.style.removeProperty('border'));
     toast('PNG Exported!');
+  } catch(e) { toast('PNG export failed.', 'alert'); }
+  document.querySelectorAll('.block-tools').forEach(t => t.style.removeProperty('display'));
+};
+
+ $('#printBtn').onclick = () => {
+  document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
+  setTimeout(() => window.print(), 100);
+};
+
+ $('#backupBtn').onclick = () => {
+  const blob = new Blob([JSON.stringify(doc)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url;
+  a.download = 'posterd45h-backup.json'; document.body.append(a); a.click(); a.remove();
+  toast('Backup downloaded.');
+};
+
+ $('#restoreBtn').onclick = () => {
+  const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const obj = JSON.parse(ev.target.result);
+        doc = Object.assign(newDoc(), obj);
+        if(!doc.blocks) doc.blocks = [];
+        pushHistory(); renderAll(); save(); toast('Poster restored!');
+      } catch(err) { toast('Invalid backup file.', 'alert'); }
+    };
+    reader.readAsText(file);
   };
+  input.click();
+};
 
-  document.getElementById('printBtn').onclick = () => {
-    document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
-    document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => {
-        document.querySelectorAll('.block-tools').forEach(t => t.style.removeProperty('display'));
-      }, 500);
-    }, 100);
-  };
+// Dark Mode
+const darkToggleBtn = $('#darkToggleBtn');
+function applyDarkMode(isDark) {
+  document.body.classList.toggle('dark-mode', isDark);
+  localStorage.setItem(LS_DARK, isDark ? '1' : '0');
+}
+darkToggleBtn.onclick = () => applyDarkMode(!document.body.classList.contains('dark-mode'));
 
-  // --- TOAST ---
-  function toast(msg) {
-    const t = document.createElement('div');
-    t.className = 'toast';
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2000);
-  }
+// Toasts
+function toast(msg, kind='info') {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  $('#toasts').append(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 3400);
+}
 
-  // --- INIT ---
-  init();
+// Boot
+function boot(){
+  const isDark = localStorage.getItem(LS_DARK) === '1';
+  applyDarkMode(isDark);
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw) {
+      const o = JSON.parse(raw);
+      doc = Object.assign(newDoc(), o);
+      if(!doc.blocks) doc.blocks = [];
+    }
+  } catch(e) {}
+  history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
+  renderAll();
+}
+boot();
 
 })();
 </script>
