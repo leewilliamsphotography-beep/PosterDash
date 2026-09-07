@@ -1,2 +1,545 @@
-posterdash
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PosterD45h — Rapid Poster Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;600;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- foundations ---------- */
+:root{
+  --bg:#0f1115; --surface:#1a1d24; --surface2:#22262f; --line:#2d313c;
+  --text:#ffffff; --text-dim:#8b919e; --accent:#ff4d4d; --accent2:#00e0ff;
+  --tb:56px;
+  --f-ui:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);-webkit-font-smoothing:antialiased}
+button{font-family:inherit;color:inherit;cursor:pointer}
+input,select{font-family:inherit}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 24px;height:var(--tb);background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:36px;height:36px}
+.brand-name{font:800 18px var(--f-ui);letter-spacing:-0.02em}
+.brand-name span{color:var(--accent)}
+.actions{display:flex;align-items:center;gap:8px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 13px var(--f-ui);padding:8px 14px;border-radius:6px;border:1px solid transparent;background:transparent;transition:all .15s}
+.btn:hover{background:var(--surface2)}
+.btn.accent{background:var(--accent);color:#fff}
+.btn.accent:hover{background:#ff3333}
+.btn.ghost{border-color:var(--line);background:var(--surface)}
+.btn.ghost:hover{background:var(--surface2);border-color:var(--text-dim)}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - var(--tb))}
+.rail{border-right:1px solid var(--line);padding:24px;overflow-y:auto;background:var(--surface)}
+.stage{display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:auto;padding:48px; background-color: var(--bg); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px;}
+
+/* ---------- text format toolbar ---------- */
+.format-bar{display:flex;gap:4px;flex-wrap:wrap;background:var(--surface2);padding:8px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;align-items:center}
+.fmt-btn{width:32px;height:32px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:4px;font-weight:bold;color:var(--text-dim);font-size:14px}
+.fmt-btn:hover{background:var(--bg);color:var(--text)}
+.fmt-btn svg{width:16px;height:16px;stroke:var(--text-dim)}
+.fmt-btn:hover svg{stroke:var(--text)}
+.fmt-select{background:var(--bg);border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:4px;font-size:13px;}
+.fmt-color{width:32px;height:32px;padding:0;border:1px solid var(--line);background:transparent;cursor:pointer;}
+
+/* ---------- rail panels ---------- */
+.panel{margin-bottom:32px}
+.panel-title{font:700 11px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel-title::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.block-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.block-btn{padding:12px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;font:600 12px var(--f-ui);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-dim);transition:all .15s}
+.block-btn:hover{color:var(--text);border-color:var(--accent);transform:translateY(-2px)}
+.block-btn svg{width:20px;height:20px;stroke:var(--accent2)}
+
+.tpl-list, .theme-list{display:flex;flex-direction:column;gap:8px}
+.tpl-btn, .theme-btn{text-align:left;padding:12px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;color:var(--text);font:600 13px var(--f-ui);display:flex;align-items:center;gap:10px;transition:all .15s}
+.tpl-btn:hover, .theme-btn:hover{border-color:var(--accent2)}
+.theme-btn.active{border-color:var(--accent);background:rgba(255,77,77,0.1)}
+.color-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--text-dim);flex:none}
+
+/* ---------- canvas / sheet ---------- */
+.sheet-container{transform-origin:top center}
+.sheet{width:600px;min-height:800px;background:#fff;color:#000;padding:48px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 50px rgba(0,0,0,0.5);transition:background .3s, color .3s; position:relative; overflow:hidden;}
+
+/* Block Styling */
+.block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
+.block:hover{border-color:rgba(0,0,0,0.15)}
+/* Removed background from focus-within to prevent theme overwrite */
+.block:focus-within{border-color:var(--accent); border-style: solid; border-width: 1px;} 
+.block.tools-visible .block-tools{opacity:1; pointer-events:auto}
+
+.block-tools{position:absolute;top:-12px;right:4px;display:flex;gap:2px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:2px;opacity:0;pointer-events:none;transition:.15s;z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+.block-tools button{background:transparent;border:0;padding:4px;display:grid;place-items:center;width:24px;height:24px;border-radius:3px}
+.block-tools button:hover{background:#eee}
+.block-tools svg{width:14px;height:14px;stroke:#555}
+
+.block[data-type="h1"]{font-size:42px;font-weight:800;line-height:1.1;letter-spacing:-0.02em;}
+.block[data-type="h2"]{font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-0.01em;}
+.block[data-type="body"]{font-size:16px;font-weight:400;line-height:1.6; color:#444;}
+.block[data-type="shape"]{height:12px; background:#000; border-radius:6px; margin: 10px 0; align-self: flex-start; width: 60px;}
+.block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:cover; background-position:center;}
+
+/* Accessible Themes */
+.sheet.theme-spring { background:#F0FFF4; border-top:12px solid #10B981; }
+.sheet.theme-spring [data-type="h1"] { color:#065F46; } 
+.sheet.theme-spring [data-type="h2"] { color:#047857; } 
+.sheet.theme-spring [data-type="body"] { color:#065F46; }
+.sheet.theme-spring .block[data-type="shape"] { background:#10B981; }
+
+.sheet.theme-summer { background:#FFFDE7; border-top:12px solid #F59E0B; }
+.sheet.theme-summer [data-type="h1"] { color:#92400E; } 
+.sheet.theme-summer [data-type="h2"] { color:#B45309; } 
+.sheet.theme-summer [data-type="body"] { color:#92400E; }
+.sheet.theme-summer .block[data-type="shape"] { background:#F59E0B; }
+
+.sheet.theme-autumn { background:#FFF3E0; border-top:12px solid #D14C1E; }
+.sheet.theme-autumn [data-type="h1"] { color:#7C2D12; } 
+.sheet.theme-autumn [data-type="h2"] { color:#9A3412; } 
+.sheet.theme-autumn [data-type="body"] { color:#7C2D12; }
+.sheet.theme-autumn .block[data-type="shape"] { background:#D14C1E; }
+
+.sheet.theme-winter { background:#F0F9FF; border-top:12px solid #3B82F6; }
+.sheet.theme-winter [data-type="h1"] { color:#1E3A8A; } 
+.sheet.theme-winter [data-type="h2"] { color:#3730A3; } 
+.sheet.theme-winter [data-type="body"] { color:#1E3A8A; }
+.sheet.theme-winter .block[data-type="shape"] { background:#3B82F6; }
+
+.sheet.theme-medical { background:#F0FDFA; border-top:12px solid #14B8A6; }
+.sheet.theme-medical [data-type="h1"] { color:#115E59; } 
+.sheet.theme-medical [data-type="h2"] { color:#0F766E; } 
+.sheet.theme-medical [data-type="body"] { color:#115E59; }
+.sheet.theme-medical .block[data-type="shape"] { background:#14B8A6; }
+
+.sheet.theme-cafe { background:#FBF7F0; border-top:12px solid #C4A484; }
+.sheet.theme-cafe [data-type="h1"] { color:#4A3B2A; } 
+.sheet.theme-cafe [data-type="h2"] { color:#6B5A48; } 
+.sheet.theme-cafe [data-type="body"] { color:#4A3B2A; }
+.sheet.theme-cafe .block[data-type="shape"] { background:#C4A484; }
+
+/* ---------- utility ---------- */
+.hidden{display:none !important}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface);color:var(--text);padding:12px 20px;border-radius:6px;border:1px solid var(--line);font:600 13px var(--f-ui);z-index:100;box-shadow:0 10px 20px rgba(0,0,0,0.3)}
+
+@media print {
+  @page { size: A4; margin: 0; }
+  body { background: #fff; }
+  .topbar, .rail, .app { display: block; height: auto; overflow: visible; }
+  .app { display: block; }
+  .rail { display: none; }
+  .stage { padding: 0; background: none; overflow: visible; }
+  .sheet { width: 210mm; min-height: 297mm; box-shadow: none; margin: 0; }
+  .block-tools { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="80" height="80" rx="16" fill="#22262f" stroke="#2d313c" stroke-width="4"/>
+      <path d="M30 25 H55 C65 25 70 32 70 40 C70 48 65 55 55 55 H40 V75 H30 Z" fill="#ff4d4d"/>
+      <circle cx="65" cy="65" r="15" fill="#00e0ff" opacity="0.9"/>
+      <rect x="55" y="55" width="20" height="20" fill="#0f1115" rx="4"/>
+    </svg>
+    <div class="brand-name">Poster<span>D45h</span></div>
+  </div>
+  <div class="actions">
+    <button class="btn ghost" id="undoBtn">Undo</button>
+    <button class="btn ghost" id="redoBtn">Redo</button>
+    <button class="btn ghost" id="pngBtn">Export PNG</button>
+    <button class="btn accent" id="printBtn">Print / PDF</button>
+  </div>
+</header>
+
+<main class="app">
+  <aside class="rail">
+    <!-- Text Formatting -->
+    <section class="panel">
+      <div class="panel-title">Text Format</div>
+      
+      <!-- Row 1: Fonts & Sizes -->
+      <div class="format-bar">
+        <select class="fmt-select" id="fontSel" title="Font Family">
+          <option value="Lexend">Lexend</option>
+          <option value="Atkinson Hyperlegible">Atkinson</option>
+          <option value="Poppins">Poppins</option>
+          <option value="Merriweather">Merriweather</option>
+          <option value="Arial">Arial</option>
+        </select>
+        <select class="fmt-select" id="sizeSel" title="Font Size">
+          <option value="2">Small</option>
+          <option value="3" selected>Normal</option>
+          <option value="5">Large</option>
+          <option value="7">X-Large</option>
+        </select>
+        <input type="color" class="fmt-color" id="textColor" value="#000000" title="Text Color">
+        <input type="color" class="fmt-color" id="bgColor" value="#ffff00" title="Highlight Color">
+      </div>
+
+      <!-- Row 2: Weights & Lists -->
+      <div class="format-bar">
+        <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+        <button class="fmt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
+        <button class="fmt-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+        <button class="fmt-btn" data-cmd="insertUnorderedList" title="Bullet List">•</button>
+        <button class="fmt-btn" data-cmd="insertOrderedList" title="Number List">1.</button>
+      </div>
+
+      <!-- Row 3: Alignment -->
+      <div class="format-bar">
+        <button class="fmt-btn" data-cmd="justifyLeft" title="Align Left">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+        </button>
+        <button class="fmt-btn" data-cmd="justifyCenter" title="Align Center">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg>
+        </button>
+        <button class="fmt-btn" data-cmd="justifyRight" title="Align Right">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="fmt-btn" data-cmd="justifyFull" title="Justify">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+      <p style="font-size:11px; color:var(--text-dim); margin:8px 0 0 0;">Select text in the poster, then click a tool above.</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">Add Blocks</div>
+      <div class="block-grid">
+        <button class="block-btn" data-add="h1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M4 6h16M4 18h16"/></svg>Heading</button>
+        <button class="block-btn" data-add="h2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h12M6 8h12M6 16h12"/></svg>Subhead</button>
+        <button class="block-btn" data-add="body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>Text</button>
+        <button class="block-btn" data-add="shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Shape</button>
+        <button class="block-btn" data-add="image" style="grid-column: span 2;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image / Upload</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">Preset Layouts</div>
+      <div class="tpl-list">
+        <button class="tpl-btn" data-tpl="event">📋 Event Poster</button>
+        <button class="tpl-btn" data-tpl="notice">⚠️ Important Notice</button>
+        <button class="tpl-btn" data-tpl="schedule">🗓️ Daily Schedule</button>
+        <button class="tpl-btn" data-tpl="menu">☕ Cafe Menu</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">Sheet Themes</div>
+      <div class="theme-list">
+        <button class="theme-btn active" data-theme="default"><span class="color-dot" style="background:#fff"></span>Plain White</button>
+        <button class="theme-btn" data-theme="spring"><span class="color-dot" style="background:#10B981"></span>Spring (Green)</button>
+        <button class="theme-btn" data-theme="summer"><span class="color-dot" style="background:#F59E0B"></span>Summer (Yellow)</button>
+        <button class="theme-btn" data-theme="autumn"><span class="color-dot" style="background:#D14C1E"></span>Autumn (Orange)</button>
+        <button class="theme-btn" data-theme="winter"><span class="color-dot" style="background:#3B82F6"></span>Winter (Blue)</button>
+        <button class="theme-btn" data-theme="medical"><span class="color-dot" style="background:#14B8A6"></span>Medical (Teal)</button>
+        <button class="theme-btn" data-theme="cafe"><span class="color-dot" style="background:#C4A484"></span>Cafe (Cream)</button>
+      </div>
+    </section>
+  </aside>
+
+  <section class="stage" id="stage">
+    <div class="sheet" id="sheet" data-theme="default">
+      <!-- Blocks injected here -->
+    </div>
+  </section>
+</main>
+
+<input type="file" id="imageUpload" class="hidden" accept="image/*">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  const sheet = document.getElementById('sheet');
+  const stage = document.getElementById('stage');
+  const imageUpload = document.getElementById('imageUpload');
+
+  let history = [];
+  let hIndex = -1;
+  let currentTargetBlock = null;
+
+  const placeholderText = {
+    h1: "Main Headline",
+    h2: "Sub Heading",
+    body: "Click to edit text. You can type anything here. Make it long, make it short, make it punchy."
+  };
+
+  // Preset Templates
+  const TEMPLATES = {
+    event: [
+      { type: 'h1', text: 'Coffee Morning' },
+      { type: 'h2', text: 'Saturday, 10am – 12pm · St Mary’s Hall' },
+      { type: 'shape' },
+      { type: 'body', text: 'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome! Bring a friend.' }
+    ],
+    notice: [
+      { type: 'h1', text: 'Important Notice' },
+      { type: 'body', text: 'Please be aware that the building will be closed on Monday for maintenance. We will reopen on Tuesday at 9:00 AM.' }
+    ],
+    schedule: [
+      { type: 'h1', text: 'My Daily Routine' },
+      { type: 'h2', text: 'Morning' },
+      { type: 'body', text: 'Wake up and eat breakfast. Brush my teeth. Go to school.' },
+      { type: 'h2', text: 'Afternoon' },
+      { type: 'body', text: 'Eat lunch. Play with friends. Art and music.' }
+    ],
+    menu: [
+      { type: 'h1', text: 'Today’s Menu' },
+      { type: 'shape' },
+      { type: 'body', text: 'Soup of the day. Sandwiches and salad. Cake and tea.' }
+    ]
+  };
+
+  function init() {
+    sheet.innerHTML = `
+      <div class="block" data-type="h1" contenteditable="true">${placeholderText.h1}</div>
+      <div class="block" data-type="h2" contenteditable="true">${placeholderText.h2}</div>
+      <div class="block" data-type="body" contenteditable="true">${placeholderText.body}</div>
+    `;
+    attachBlockListeners();
+    pushHistory();
+  }
+
+  function attachBlockListeners() {
+    document.querySelectorAll('.block').forEach(block => {
+      if(block.dataset.attached) return;
+      
+      block.addEventListener('mouseenter', () => {
+        block.classList.add('tools-visible');
+        if(!block.querySelector('.block-tools')) {
+          const tools = document.createElement('div');
+          tools.className = 'block-tools';
+          tools.innerHTML = `
+            <button data-act="up" title="Move Up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+            <button data-act="down" title="Move Down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <button data-act="del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+          `;
+          block.appendChild(tools);
+          
+          tools.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const btn = e.target.closest('button');
+            if(!btn) return;
+            const act = btn.dataset.act;
+            if(act === 'up' && block.previousElementSibling) {
+              sheet.insertBefore(block, block.previousElementSibling);
+            } else if(act === 'down' && block.nextElementSibling) {
+              sheet.insertBefore(block.nextElementSibling, block);
+            } else if(act === 'del') {
+              block.remove();
+            }
+            pushHistory();
+          });
+        }
+      });
+
+      block.addEventListener('mouseleave', () => {
+        block.classList.remove('tools-visible');
+      });
+
+      block.addEventListener('mousedown', (e) => {
+        if(e.target.closest('.block-tools')) {
+          e.preventDefault();
+        }
+      });
+
+      block.dataset.attached = "true";
+    });
+  }
+
+  // Add Block
+  document.querySelectorAll('[data-add]').forEach(btn => {
+    btn.onclick = () => {
+      const type = btn.dataset.add;
+      if(type === 'image') {
+        currentTargetBlock = null;
+        imageUpload.click();
+        return;
+      }
+
+      const block = document.createElement('div');
+      block.className = 'block';
+      block.dataset.type = type;
+      block.setAttribute('contenteditable', 'true');
+      block.textContent = placeholderText[type] || "Edit me";
+      
+      sheet.appendChild(block);
+      attachBlockListeners();
+      pushHistory();
+      block.focus();
+    };
+  });
+
+  // Apply Templates
+  document.querySelectorAll('[data-tpl]').forEach(btn => {
+    btn.onclick = () => {
+      const tpl = TEMPLATES[btn.dataset.tpl];
+      sheet.innerHTML = '';
+      tpl.forEach(item => {
+        const block = document.createElement('div');
+        block.className = 'block';
+        block.dataset.type = item.type;
+        if(item.type !== 'shape') {
+          block.setAttribute('contenteditable', 'true');
+          block.textContent = item.text;
+        }
+        sheet.appendChild(block);
+      });
+      attachBlockListeners();
+      pushHistory();
+      toast('Template loaded!');
+    };
+  });
+
+  // Image Upload Handler
+  imageUpload.onchange = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if(currentTargetBlock) {
+        currentTargetBlock.style.backgroundImage = `url(${ev.target.result})`;
+        currentTargetBlock.textContent = '';
+      } else {
+        const block = document.createElement('div');
+        block.className = 'block';
+        block.dataset.type = 'image';
+        block.style.backgroundImage = `url(${ev.target.result})`;
+        block.textContent = '';
+        sheet.appendChild(block);
+        attachBlockListeners();
+        pushHistory();
+      }
+      imageUpload.value = '';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Text Formatting Commands
+  // Ensure CSS is used for styling so it sticks properly
+  document.execCommand('styleWithCSS', false, true);
+
+  document.querySelectorAll('[data-cmd]').forEach(btn => {
+    btn.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // Keep focus in the text area
+    });
+    btn.onclick = () => {
+      document.execCommand(btn.dataset.cmd, false, null);
+      pushHistory();
+    };
+  });
+
+  document.getElementById('fontSel').onchange = (e) => {
+    document.execCommand('fontName', false, e.target.value);
+    pushHistory();
+  };
+  document.getElementById('sizeSel').onchange = (e) => {
+    document.execCommand('fontSize', false, e.target.value);
+    pushHistory();
+  };
+  
+  // Use 'input' instead of 'onchange' so it applies immediately
+  document.getElementById('textColor').addEventListener('input', (e) => {
+    document.execCommand('foreColor', false, e.target.value);
+  });
+  document.getElementById('bgColor').addEventListener('input', (e) => {
+    document.execCommand('hiliteColor', false, e.target.value);
+  });
+
+  // Theme Switcher
+  document.querySelectorAll('[data-theme]').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Remove all theme classes
+      sheet.className = sheet.className.replace(/\btheme-\S+/g, '').trim();
+      // Add new theme class
+      if(btn.dataset.theme !== 'default') {
+        sheet.classList.add('theme-' + btn.dataset.theme);
+      }
+      pushHistory();
+    };
+  });
+
+  // History / Undo Redo
+  function pushHistory() {
+    history = history.slice(0, hIndex + 1);
+    history.push(sheet.innerHTML);
+    if(history.length > 50) history.shift();
+    else hIndex++;
+    updateUndoRedo();
+  }
+
+  function undo() { if(hIndex > 0) { hIndex--; sheet.innerHTML = history[hIndex]; attachBlockListeners(); updateUndoRedo(); } }
+  function redo() { if(hIndex < history.length - 1) { hIndex++; sheet.innerHTML = history[hIndex]; attachBlockListeners(); updateUndoRedo(); } }
+
+  function updateUndoRedo() {
+    document.getElementById('undoBtn').disabled = hIndex <= 0;
+    document.getElementById('redoBtn').disabled = hIndex >= history.length - 1;
+  }
+
+  document.getElementById('undoBtn').onclick = undo;
+  document.getElementById('redoBtn').onclick = redo;
+
+  // Save on text edits
+  sheet.addEventListener('input', () => {
+    clearTimeout(window.saveT);
+    window.saveT = setTimeout(pushHistory, 500);
+  });
+
+  // Export PNG
+  document.getElementById('pngBtn').onclick = async () => {
+    document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
+    
+    const canvas = await html2canvas(sheet, { scale: 2, backgroundColor: null, logging: false });
+    const link = document.createElement('a');
+    link.download = 'posterd45h.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    document.querySelectorAll('.block-tools').forEach(t => t.style.removeProperty('display'));
+    document.querySelectorAll('.block').forEach(b => b.style.removeProperty('border'));
+    toast('PNG Exported!');
+  };
+
+  // Print
+  document.getElementById('printBtn').onclick = () => {
+    document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => {
+        document.querySelectorAll('.block-tools').forEach(t => t.style.removeProperty('display'));
+      }, 500);
+    }, 100);
+  };
+
+  // Toast
+  function toast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
+  }
+
+  // Init
+  init();
+
+})();
+</script>
+</body>
+</html>
