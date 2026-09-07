@@ -339,49 +339,91 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-const LS_KEY='posterd45h.doc.carehome';
+const LS_KEY='posterd45h.doc.carehome.v2';
 const LS_DARK='posterd45h.dark';
 
-// Care Home Focused Presets
+// Care Home Focused Presets - Explicitly filled with text
 const TEMPLATES = {
-  nowNext: { name:'Now & Next Board', theme:'summer', bgColor:'#FFFDE7', pattern:'none', patternColor:'#FEF3C7', blocks:[
-    { type:'h1', text:'Now and Next', align:'center', style:{ color:'#92400E', fontFamily:'Poppins', fontSize:'42px' } },
-    { type:'panel', text:'NOW', align:'center', style:{ backgroundColor:'#F59E0B', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'32px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
-    { type:'panel', text:'Tidy up the toys.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#92400E', padding:'30px', borderRadius:'0 0 12px 12px', fontSize:'24px', border:'3px solid #F59E0B', borderTop:'none' } },
-    { type:'panel', text:'NEXT', align:'center', style:{ backgroundColor:'#10B981', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'32px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
-    { type:'panel', text:'Choose a game to play.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#065F46', padding:'30px', borderRadius:'0 0 12px 12px', fontSize:'24px', border:'3px solid #10B981', borderTop:'none' } }
-  ]},
-  timetable: { name:'Visual Timetable', theme:'spring', bgColor:'#F0FFF4', pattern:'grid', patternColor:'#D1FAE5', blocks:[
-    { type:'h1', text:'My Day', align:'left', style:{ color:'#065F46', fontFamily:'Lexend', fontSize:'36px' } },
-    { type:'panel', text:'Morning: Reading time', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
-    { type:'panel', text:'Midday: Play outside', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
-    { type:'panel', text:'Lunch at 12:00', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
-    { type:'panel', text:'Afternoon: Art and music', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } }
-  ]},
-  event: { name:'Activity Poster', theme:'autumn', bgColor:'#FFF3E0', pattern:'dots', patternColor:'#FFEDD5', blocks:[
-    { type:'h1', text:'Coffee Morning', align:'center', style:{ color:'#7C2D12', fontFamily:'Lexend', fontSize:'48px' } },
-    { type:'h2', text:'Saturday, 10am – 12pm', align:'center', style:{ color:'#9A3412', fontFamily:'Lexend', fontSize:'24px' } },
-    { type:'shape', style:{ width:'100px', height:'4px', backgroundColor:'#D14C1E', borderRadius:'2px', margin:'20px auto' } },
-    { type:'panel', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome!', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #D14C1E', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#7C2D12' } }
-  ]},
-  social: { name:'Social Story', theme:'medical', bgColor:'#F0FDFA', pattern:'dots', patternColor:'#CCFBF1', blocks:[
-    { type:'panel', text:'Going to the Doctor', align:'left', style:{ backgroundColor:'#14B8A6', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
-    { type:'panel', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair. The doctor looks at my teeth. I am brave. I get a sticker.', align:'left', style:{ backgroundColor:'#FFFFFF', color:'#115E59', padding:'25px', borderRadius:'0 0 12px 12px', fontSize:'18px', border:'2px solid #14B8A6', borderTop:'none', lineHeight:'1.8' } }
-  ]},
-  menu: { name:'Choice Menu', theme:'cafe', bgColor:'#FBF7F0', pattern:'none', patternColor:'#EAE0D5', blocks:[
-    { type:'h1', text:'Today’s Menu', align:'center', style:{ color:'#4A3B2A', fontFamily:'Merriweather', fontStyle:'italic', fontSize:'42px' } },
-    { type:'shape', style:{ width:'100%', height:'0', borderTop:'2px dotted #C4A484', backgroundColor:'transparent', margin:'20px 0' } },
-    { type:'h2', text:'Option 1: Soup and Bread', align:'left', style:{ color:'#6B5A48', fontFamily:'Lexend', fontSize:'22px' } },
-    { type:'h2', text:'Option 2: Cheese Sandwich', align:'left', style:{ color:'#6B5A48', fontFamily:'Lexend', fontSize:'22px' } },
-    { type:'h2', text:'Option 3: Salad Bowl', align:'left', style:{ color:'#6B5A48', fontFamily:'Lexend', fontSize:'22px' } },
-    { type:'shape', style:{ width:'100%', height:'0', borderTop:'2px dotted #C4A484', backgroundColor:'transparent', margin:'20px 0' } },
-    { type:'body', text:'Please tell staff your choice by 10:00 AM.', align:'center', style:{ color:'#4A3B2A', fontSize:'16px' } }
-  ]},
-  notice: { name:'Visitor Notice', theme:'winter', bgColor:'#F0F9FF', pattern:'grid', patternColor:'#DBEAFE', blocks:[
-    { type:'h1', text:'Important Notice', align:'center', style:{ color:'#1E3A8A', fontFamily:'Lexend', fontSize:'40px' } },
-    { type:'shape', style:{ width:'100%', height:'4px', backgroundColor:'#3B82F6', borderRadius:'2px', margin:'10px 0 20px 0' } },
-    { type:'panel', text:'Family visiting hours are from 2:00 PM to 4:00 PM. Please sign in at the front desk.', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #3B82F6', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#1E3A8A' } }
-  ]}
+  dailyMenu: { 
+    name:'Daily Menu', 
+    theme:'cafe', 
+    bgColor:'#FBF7F0', 
+    pattern:'none', 
+    patternColor:'#EAE0D5', 
+    blocks:[
+      { type:'h1', text:'Today’s Menu', align:'center', style:{ color:'#4A3B2A', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
+      { type:'panel', text:'Breakfast (8:00 AM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend' } },
+      { type:'body', text:'Porridge with honey\nToast with butter\nTea or Coffee', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
+      { type:'panel', text:'Lunch (12:30 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+      { type:'body', text:'Beef stew with dumplings\nVegetable soup with bread roll\nFresh fruit', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
+      { type:'panel', text:'Tea / Supper (5:00 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+      { type:'body', text:'Cheese and crackers\nHam sandwiches\nCup of tea', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } }
+    ]
+  },
+  nowNext: { 
+    name:'Now & Next Board', 
+    theme:'summer', 
+    bgColor:'#FFFDE7', 
+    pattern:'none', 
+    patternColor:'#FEF3C7', 
+    blocks:[
+      { type:'h1', text:'Now and Next', align:'center', style:{ color:'#92400E', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
+      { type:'panel', text:'NOW', align:'center', style:{ backgroundColor:'#F59E0B', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
+      { type:'panel', text:'Tidy up the toys.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#92400E', padding:'25px', borderRadius:'0 0 8px 8px', fontSize:'22px', border:'3px solid #F59E0B', borderTop:'none' } },
+      { type:'panel', text:'NEXT', align:'center', style:{ backgroundColor:'#10B981', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+      { type:'panel', text:'Choose a game to play.', align:'center', style:{ backgroundColor:'#FFFFFF', color:'#065F46', padding:'25px', borderRadius:'0 0 8px 8px', fontSize:'22px', border:'3px solid #10B981', borderTop:'none' } }
+    ]
+  },
+  timetable: { 
+    name:'Visual Timetable', 
+    theme:'spring', 
+    bgColor:'#F0FFF4', 
+    pattern:'grid', 
+    patternColor:'#D1FAE5', 
+    blocks:[
+      { type:'h1', text:'My Day', align:'left', style:{ color:'#065F46', fontFamily:'Lexend', fontSize:'36px', marginBottom:'20px' } },
+      { type:'panel', text:'Morning: Reading time', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
+      { type:'panel', text:'Midday: Play outside', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
+      { type:'panel', text:'Lunch at 12:00', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } },
+      { type:'panel', text:'Afternoon: Art and music', align:'left', style:{ backgroundColor:'#FFFFFF', borderLeft:'8px solid #10B981', padding:'15px 20px', borderRadius:'0 8px 8px 0', fontSize:'20px', color:'#065F46', fontWeight:'600' } }
+    ]
+  },
+  event: { 
+    name:'Activity Poster', 
+    theme:'autumn', 
+    bgColor:'#FFF3E0', 
+    pattern:'dots', 
+    patternColor:'#FFEDD5', 
+    blocks:[
+      { type:'h1', text:'Coffee Morning', align:'center', style:{ color:'#7C2D12', fontFamily:'Lexend', fontSize:'48px' } },
+      { type:'h2', text:'Saturday, 10am – 12pm', align:'center', style:{ color:'#9A3412', fontFamily:'Lexend', fontSize:'24px' } },
+      { type:'shape', style:{ width:'100px', height:'4px', backgroundColor:'#D14C1E', borderRadius:'2px', margin:'20px auto' } },
+      { type:'panel', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome!', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #D14C1E', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#7C2D12' } }
+    ]
+  },
+  social: { 
+    name:'Social Story', 
+    theme:'medical', 
+    bgColor:'#F0FDFA', 
+    pattern:'dots', 
+    patternColor:'#CCFBF1', 
+    blocks:[
+      { type:'panel', text:'Going to the Doctor', align:'left', style:{ backgroundColor:'#14B8A6', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
+      { type:'panel', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair. The doctor looks at my teeth. I am brave. I get a sticker.', align:'left', style:{ backgroundColor:'#FFFFFF', color:'#115E59', padding:'25px', borderRadius:'0 0 12px 12px', fontSize:'18px', border:'2px solid #14B8A6', borderTop:'none', lineHeight:'1.8' } }
+    ]
+  },
+  notice: { 
+    name:'Visitor Notice', 
+    theme:'winter', 
+    bgColor:'#F0F9FF', 
+    pattern:'grid', 
+    patternColor:'#DBEAFE', 
+    blocks:[
+      { type:'h1', text:'Important Notice', align:'center', style:{ color:'#1E3A8A', fontFamily:'Lexend', fontSize:'40px' } },
+      { type:'shape', style:{ width:'100%', height:'4px', backgroundColor:'#3B82F6', borderRadius:'2px', margin:'10px 0 20px 0' } },
+      { type:'panel', text:'Family visiting hours are from 2:00 PM to 4:00 PM. Please sign in at the front desk.', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #3B82F6', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#1E3A8A' } }
+    ]
+  }
 };
 
 let uidSeq=1;
@@ -455,6 +497,7 @@ function renderAll(){
 }
 
 function renderBlocks(){
+  // Map blocks to HTML, explicitly replacing \n with <br> so line breaks show up
   linesEl.innerHTML = doc.blocks.map(blockHTML).join('');
   $('#empty').hidden = doc.blocks.length > 0;
   attachBlockListeners();
@@ -469,13 +512,16 @@ function blockHTML(b){
   const fullStyle = `style="${alignStyle}${styleStr}"`;
   const ph = b.type === 'h1' ? 'Heading' : (b.type === 'h2' ? 'Subhead' : (b.type === 'panel' ? 'Panel Text' : 'Text'));
   
+  // Crucial fix: convert \n to <br> so text isn't blank or clumped together
+  const textContent = esc(b.text || '').replace(/\n/g, '<br>');
+  
   if(b.type === 'shape'){
     return `<div class="block" data-type="shape" data-uid="${b.uid}" ${fullStyle}></div>` + getToolsHTML(b.uid);
   } else if(b.type === 'image'){
     const imgSrc = b.imgSrc ? `background-image:url('${b.imgSrc}');` : '';
     return `<div class="block" data-type="image" data-uid="${b.uid}" style="${imgSrc}${styleStr}"></div>` + getToolsHTML(b.uid);
   } else {
-    return `<div class="block" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" data-ph="${ph}" ${fullStyle}>${esc(b.text || '')}</div>` + getToolsHTML(b.uid);
+    return `<div class="block" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" data-ph="${ph}" ${fullStyle}>${textContent}</div>` + getToolsHTML(b.uid);
   }
 }
 
@@ -632,7 +678,10 @@ linesEl.addEventListener('focusin', (e) => {
     const uidVal = block.dataset.uid;
     block.oninput = () => {
       const b = doc.blocks.find(x => x.uid === uidVal);
-      if(b) b.text = block.textContent;
+      if(b) {
+        // Store raw text with line breaks
+        b.text = block.innerText; 
+      }
       save();
     };
     block.onblur = () => pushHistory();
